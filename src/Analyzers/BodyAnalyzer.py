@@ -120,7 +120,7 @@ class BodyAnalyzer(Analyzer):
             if version.is_mgl and self.position == 0:
                 operation_type = self.OP_META2
             else:
-                operation_type = self.read_body('i', 4)
+                operation_type = self.read_body('L', 4)
 
             if operation_type == self.OP_META or operation_type == self.OP_META2:
                 command = self.read_body('l', 4)
@@ -145,7 +145,6 @@ class BodyAnalyzer(Analyzer):
                 next_position = self.position + length
                 command = ord(self.body[self.position])
                 self.position += 1
-
 
                 # player resign
                 if command == self.COMMAND_RESIGN:
@@ -172,20 +171,17 @@ class BodyAnalyzer(Analyzer):
                     if research_id == self.RESEARCH_FEUDAL:
                         research_duration = 130000
                         player.feudal_time = self.current_time + research_duration
-                        break
                     elif research_id == self.RESEARCH_CASTLE:
                         # persians have faster research time
                         research_duration = 160000
                         if player.civ_id == Civilization.PERSIANS:
                             research_duration /= 1.10
                         player.castle_time = self.current_time + round(research_duration)
-                        break
                     elif research_id == self.RESEARCH_IMPERIAL:
                         research_duration = 190000
                         if player.civ_id == Civilization.PERSIANS:
                             research_duration /= 1.15
                         player.imperial_time = self.current_time + round(research_duration)
-                        break
                     player.add_research(research_id, self.current_time)
                 # training unit
                 elif command == self.COMMAND_TRAIN:
@@ -308,3 +304,4 @@ class BodyAnalyzer(Analyzer):
                 self.current_time,
                 player,
                 chat[3:]))
+

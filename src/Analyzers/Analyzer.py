@@ -26,7 +26,7 @@ class Analyzer(object):
         """Get the result of another analyzer."""
         return self.rec.get_analysis(analyzer, arg).analysis
 
-    def read(self, analyzer, arg=[]):
+    def read(self, analyzer, arg={}):
         """
         Compose another analyzer. Starts reading at the current position, and
         uses the composed analyzer's final position as the new position.

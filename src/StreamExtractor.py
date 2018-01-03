@@ -43,9 +43,12 @@ class StreamExtractor(object):
     def determine_header_length(self):
         """Find the header length."""
         raw_read = self.fp.read(4)
+
         if not raw_read or len(raw_read) < 4:
             raise Exception('Unable to read the header length')
+
         self.header_len = struct.unpack('L', raw_read)[0]
+
         if not self.header_len:
             self.manually_determine_header_length()
             if not self.header_len:
@@ -84,8 +87,9 @@ class StreamExtractor(object):
         """Read or return the Recorded Game file's body."""
         if self.body_contents:
             return self.body_contents
-        if self.header_len:
+        if not self.header_len:
             self.determine_header_length()
+
         self.fp.seek(self.header_start + self.header_len, 0)
         self.body_contents = ''
         self.body_contents = self.fp.read()

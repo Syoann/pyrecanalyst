@@ -103,7 +103,11 @@ class PlayerObjectsListAnalyzer(Analyzer):
             self.ownerId = None
             if self.object_type:
                 self.owner_id = self.read_header('B', 1)
-                self.owner = self.players[self.owner_id]
+
+                try:
+                    self.owner = self.players[self.owner_id]
+                except:
+                    pass
             else:
                 self.position += 1
 
@@ -139,7 +143,7 @@ class PlayerObjectsListAnalyzer(Analyzer):
                 else:
                     raise Exception('Could not find GAIA object separator')
             else:
-                raise Exception('Unknown object type ' + self.object_type)
+                raise Exception('Unknown object type ' + str(self.object_type))
 
         analysis = Analysis()
         # TODO these probably don't need to be separate.

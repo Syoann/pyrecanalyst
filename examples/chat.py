@@ -5,10 +5,6 @@
 This example reads chat messages from a recorded game.
 
 Usage:
-   # Use a test file with lots of chat.
-   python examples/chat.py
-
-   # Use a recorded game of your choice.
    python examples/chat.py /path/to/your/own/file.mgx
 """
 
