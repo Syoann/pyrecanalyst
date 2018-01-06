@@ -272,7 +272,7 @@ class BodyAnalyzer(Analyzer):
     def process_game_start(self):
         if self.version.is_mgl:
             self.position += 28
-            ver = ord(self.BodyAnalyzer[self.position])
+            ver = ord(self.body[self.position])
             self.position += 4
         else:
             self.position += 20

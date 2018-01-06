@@ -10,7 +10,7 @@ class Achievements(object):
 
         achievements = {}
 
-        for i, player in post_game_data.players.iterkeys():
+        for i, player in post_game_data.players.iteritems():
             if not player.name:
                 continue
             achievements[i] = {

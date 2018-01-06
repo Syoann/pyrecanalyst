@@ -1,7 +1,7 @@
 from Analyzers.Analyzer import Analyzer
 
-
 class Data(object):
+    """Game data"""
     def __init__(self):
         self.scenario_filename = None
         self.num_players = None
@@ -24,6 +24,88 @@ class Data(object):
         self.lock_teams = None
         self.lock_speed = None
         self.u2 = None
+
+
+class PlayerStats(object):
+    """Player statistics"""
+    def __init__(self):
+        self.name = None
+        self.total_score = None
+        self.victory = None
+        self.civ_id = None
+        self.color_id = None
+        self.team = None
+        self.allies_count = None
+        self.mvp = None
+        self.result = None
+
+        self.military_stats = None
+        self.economy_stats = None
+        self.tech_stats = None
+        self.society_stats = None
+
+
+
+class MilitaryStats(object):
+    """Military statistics"""
+    def __init__(self):
+        self.score = None
+        self.units_killed = None
+        self.hit_points_killed = None
+        self.units_lost = None
+        self.buildings_razed = None
+        self.hit_points_razed = None
+        self.buildings_lost = None
+        self.units_converted = None
+
+        # Amount of units killed and buildings razed against each player.
+        self.player_units_killed = {}
+        self.player_buildings_razed = {}
+
+
+
+class EconomyStats(object):
+    """Economic statistics"""
+    def __init__(self):
+        self.score = None
+        self.u0 = None
+        self.food_collected = None
+        self.wood_collected = None
+        self.stone_collected = None
+        self.gold_collected = None
+        self.tribute_sent = None
+        self.tribute_received = None
+        self.trade_profit = None
+        self.relic_gold = None
+        self.player_tribute_sent = {}
+
+
+
+class TechStats(object):
+    """Technology statistics"""
+    def __init__(self):
+        self.score = None
+        self.u0 = None
+        self.feudal_time = None
+        self.castle_time = None
+        self.imperial_time = None
+        self.map_exploration = None
+        self.research_count = None
+        self.research_percent = None
+
+
+
+class SocietyStats(object):
+    """Society statistics"""
+    def __init__(self):
+        self.score = None
+        self.total_wonders = None
+        self.total_castles = None
+        self.relics_captured = None
+        self.u0 = None
+        self.villager_high = None
+
+
 
 class PostgameDataAnalyzer(Analyzer):
     """Analyze a UserPatch post-game data block, containing achievements."""
@@ -73,14 +155,14 @@ class PostgameDataAnalyzer(Analyzer):
         self.position += 1
         data.u2 = ord(self.body[self.position])
 
-        players = []
+        players = {}
         for i in range(0, 8):
-            player_stats = object()
+            player_stats = PlayerStats()
             player_stats.name = self.read_body_raw(16).rstrip()
-            player_stats.total_score = self.read_body('v', 2)
-            total_scores = []
+            player_stats.total_score = self.read_body('H', 2)
+            total_scores = [None] * 9
             for j in range(0, 8):
-                total_scores[j] = self.read_body('v', 2)
+                total_scores[j] = self.read_body('H', 2)
 
             player_stats.total_scores = total_scores
             self.position += 1
@@ -101,47 +183,48 @@ class PostgameDataAnalyzer(Analyzer):
             player_stats.result = ord(self.body[self.position])
             self.position += 3  # Padding?
 
-            military_stats = object()
-            military_stats.score = self.read_body('v', 2)
-            military_stats.units_killed = self.read_body('v', 2)
-            military_stats.hit_points_killed = self.read_body('v', 2)
-            military_stats.units_lost = self.read_body('v', 2)
-            military_stats.buildings_razed = self.read_body('v', 2)
-            military_stats.hit_points_razed = self.read_body('v', 2)
-            military_stats.buildings_lost = self.read_body('v', 2)
-            military_stats.units_converted = self.read_body('v', 2)
+            military_stats = MilitaryStats()
+            military_stats.score = self.read_body('H', 2)
+            military_stats.units_killed = self.read_body('H', 2)
+            military_stats.hit_points_killed = self.read_body('H', 2)
+            military_stats.units_lost = self.read_body('H', 2)
+            military_stats.buildings_razed = self.read_body('H', 2)
+            military_stats.hit_points_razed = self.read_body('H', 2)
+            military_stats.buildings_lost = self.read_body('H', 2)
+            military_stats.units_converted = self.read_body('H', 2)
+
             # Amount of units killed and buildings razed against each player.
             military_stats.player_units_killed = {}
             for other in range(1, 9):
-                military_stats.player_units_killed[other] = self.read_body('v', 2)
+                military_stats.player_units_killed[other] = self.read_body('H', 2)
 
-            military_stats.player_buildings_razed = []
+            military_stats.player_buildings_razed = {}
             for other in range(1, 9):
-                military_stats.player_buildings_razed[other] = self.read_body('v', 2)
+                military_stats.player_buildings_razed[other] = self.read_body('H', 2)
 
             player_stats.military_stats = military_stats
 
-            economy_stats = object()
-            economy_stats.score = self.read_body('v', 2)
-            economy_stats.u0 = self.read_body('v', 2) # Probably padding?
+            economy_stats = EconomyStats()
+            economy_stats.score = self.read_body('H', 2)
+            economy_stats.u0 = self.read_body('H', 2) # Probably padding?
             economy_stats.food_collected = self.read_body('l', 4)
             economy_stats.wood_collected = self.read_body('l', 4)
             economy_stats.stone_collected = self.read_body('l', 4)
             economy_stats.gold_collected = self.read_body('l', 4)
-            economy_stats.tribute_sent = self.read_body('v', 2)
-            economy_stats.tribute_received = self.read_body('v', 2)
-            economy_stats.trade_profit = self.read_body('v', 2)
-            economy_stats.relic_gold = self.read_body('v', 2)
+            economy_stats.tribute_sent = self.read_body('H', 2)
+            economy_stats.tribute_received = self.read_body('H', 2)
+            economy_stats.trade_profit = self.read_body('H', 2)
+            economy_stats.relic_gold = self.read_body('H', 2)
             # Tribute sent to each player.
             economy_stats.playerTributeSent = []
             for other in range(1, 9):
-                economy_stats.player_tribute_sent[other] = self.read_body('v', 2)
+                economy_stats.player_tribute_sent[other] = self.read_body('H', 2)
 
             player_stats.economy_stats = economy_stats
 
-            tech_stats = object()
-            tech_stats.score = self.read_body('v', 2)
-            tech_stats.u0 = self.read_body('v', 2)  # Probably padding?
+            tech_stats = TechStats()
+            tech_stats.score = self.read_body('H', 2)
+            tech_stats.u0 = self.read_body('H', 2)  # Probably padding?
             tech_stats.feudal_time = self.read_body('l', 4)
             tech_stats.castle_time = self.read_body('l', 4)
             tech_stats.imperial_time = self.read_body('l', 4)
@@ -155,8 +238,8 @@ class PostgameDataAnalyzer(Analyzer):
 
             self.position += 1  # Padding
 
-            society_stats = object()
-            society_stats.score = self.read_body('v', 2)
+            society_stats = SocietyStats()
+            society_stats.score = self.read_body('H', 2)
             self.position += 1
             society_stats.total_wonders = ord(self.body[self.position])
             self.position += 1
@@ -165,15 +248,16 @@ class PostgameDataAnalyzer(Analyzer):
             society_stats.relics_captured = ord(self.body[self.position])
             self.position += 1
             society_stats.u0 = ord(self.body[self.position])
-            society_stats.villager_high = self.read_body('v', 2)
+            society_stats.villager_high = self.read_body('H', 2)
             player_stats.society_stats = society_stats
 
             # Padding.
             self.position += 84
 
-            players.append(player_stats)
+            players[i] = player_stats
 
         data.players = players
 
         self.position += 4
+
         return data

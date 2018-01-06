@@ -118,6 +118,7 @@ class GameSettings():
         if extract_rms_name and self.is_custom_map():
             name_extractor = MapName(self.rec)
             likely_name = name_extractor.run()
+
             if likely_name:
                 return likely_name
         return self.rec.trans('map_names', self.map_id)

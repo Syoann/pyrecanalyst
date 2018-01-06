@@ -27,11 +27,16 @@ class MapName(object):
             'es': 'Tipo de mapa: (.*)',
             'fr': 'Type de carte : (.*)',
             'it': 'Tipo di mappa: (.*)',
-            'jp': 'マップの種類: (.*)',
-            'ko': '지도 종류: (.*)',
-            'nl': 'Kaarttype: (.*)',
-            'ru': 'Тип карты: (.*)',
-            'zh': '地图类型: (.*)',
+            'jp': 'マップの種類: (.*)'.decode("utf-8").encode("cp932"),
+            'jp_utf8': u'マップの種類: (.*)',
+            'ko': '지도 종류: (.*)'.decode("utf-8").encode("cp949"),
+            'ko_utf8': u'지도 종류: (.*)',
+            'nl': 'Kaarttype: (.*)'.decode("utf-8").encode("windows-1251"),
+            'nl_utf8': 'Kaarttype: (.*)',
+            'ru': 'Тип карты: (.*)'.decode("utf-8").encode("cp936"),
+            'ru_utf8': u'Тип карты: (.*)',
+            'zh': '地图类型: (.*)'.decode("utf-8").encode("cp936"),
+            'zh_utf8': u'地图类型: (.*)'
         }
 
     def run(self):

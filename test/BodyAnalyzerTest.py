@@ -42,18 +42,16 @@ class BodyAnalyzerTest(unittest.TestCase):
         rec = RecordedGame(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'recs/versions/MP Replay v4.3 @2015.09.11 221142 (2).msx'))
         tributes = rec.run_analyzer(BodyAnalyzer()).tributes
 
-        print(tributes)
-
-        self.assertEqual(10000, 'amount', tributes[0])
-        self.assertEqual(Tribute.WOOD, 'resource_id', tributes[0])
-        self.assertEqual('Ruga the Hun (Original AI)', 'name', tributes[0].playerFrom)
-        self.assertEqual('Mu Gui-ying (Original AI)', 'name', tributes[0].playerTo)
+        self.assertEqual(10000, tributes[0].amount)
+        self.assertEqual(Tribute.WOOD, tributes[0].resource_id)
+        self.assertEqual('Ruga the Hun (Original AI)', tributes[0].player_from.name)
+        self.assertEqual('Mu Gui-ying (Original AI)', tributes[0].player_to.name)
 
     def test_achievements(self):
         rec = RecordedGame(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'recs/versions/up1.4.mgz'))
         rec.body()  # Populate achievements on player objects.
-        self.assertEqual(7411, rec.get_player(1).achievements()['score'])
-        self.assertEqual(9484, rec.get_player(2).achievements()['score'])
+        self.assertEqual(7411, rec.get_player(1).achievements()["score"])
+        self.assertEqual(9484, rec.get_player(2).achievements()["score"])
 
     def coop_chat(self):
         rec = RecordedGame(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'recs/FluffyFur+yousifr+TheBlackWinds+Mobius_One[Chinese]=VS=MOD3000+Chrazini+ClosedLoop+ [AGM]Wineup[Britons]_1v1_8PlayerCo-op_01222015.mgx2'))
