@@ -110,7 +110,6 @@ class GameSettings():
 
     def map_name(self, options={}):
         """Get the map name."""
-
         extract_rms_name = True
         if 'extract_rms_name' in options:
             extract_rms_name = options['extract_rms_name']

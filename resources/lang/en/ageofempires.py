@@ -134,7 +134,7 @@
   'game_speeds':
   {
     0: 'Slow',
-    1: 'Normal',
+    1.5: 'Normal',
     2: 'Fast',
   },
   'reveal_map':

@@ -88,7 +88,7 @@ class Civilization(object):
                       Civilization.KOREANS)
 
     @staticmethod
-    def is_forgoteen_civ(id):
+    def is_forgotten_civ(id):
         """
         Checks if a civilization was added in the Forgotten Empires expansion.
         false otherwise.

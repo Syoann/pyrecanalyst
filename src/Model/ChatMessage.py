@@ -39,7 +39,7 @@ class ChatMessage():
 
         # This is directed someplace (@All, @Team, @Enemy, etc.)
         # Voobly adds @Rating messages too, which we might wish to parse into
-        # the player objects later as a `rating` property.
+        # the player objects later as a 'rating' property.
         if chat.startswith('<'):
             # Standard directed chat messages have a format like:
             #   <All>PlayerName: message
@@ -57,7 +57,12 @@ class ChatMessage():
 
         if not player:
             player = Player()
-            player.name = chat[:chat.index(': ')].strip()
+
+            try:
+                player.name = chat[:chat.index(': ')].strip()
+            # Empty message ?
+            except:
+                player.name = chat[:chat.index(':')].strip()
 
         # Cut the player name out of the message contents.
         chat = chat[len(player.name) + 2:].strip()

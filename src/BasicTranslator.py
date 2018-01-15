@@ -17,7 +17,7 @@ class BasicTranslator(object):
         if not file in self.translations:
             current = self.get_file_path(self.locale, file)
             # Default to English
-            if not os.path.isfile(current) and self.locale != 'en':
+            if not os.path.isfile(current):
                 current = self.get_file_path('en', file)
             translation_table = eval(open(current).read())
             self.translations[file] = translation_table
@@ -27,14 +27,14 @@ class BasicTranslator(object):
         """Get the path to a translation file."""
         return os.path.dirname(os.path.abspath(__file__)) + '/../resources/lang/' + locale + '/' + file + '.py'
 
-    def get(self, arr, path):
-        """Get a value from a dotted property path."""
+    def get(self, arr, lst):
+        """Get a value from a property list."""
         if not arr:
             return None
 
-        for prop in path:
-            if prop in arr:
-                arr = arr[prop]
-            else:
-                return ""
+        prop, val = lst
+        if prop in arr and val in arr[prop]:
+            arr = arr[prop][val]
+        else:
+            return ""
         return arr

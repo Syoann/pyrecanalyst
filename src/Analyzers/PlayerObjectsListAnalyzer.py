@@ -98,7 +98,6 @@ class PlayerObjectsListAnalyzer(Analyzer):
         done = False
         while not done:
             self.object_type = self.read_header('B', 1)
-
             self.owner = None
             self.ownerId = None
             if self.object_type:
@@ -184,6 +183,7 @@ class PlayerObjectsListAnalyzer(Analyzer):
             self.position += 59
             is_extended = ord(self.header[self.position])
             self.position += 1  # isExtended
+
             self.position += 4
             if is_extended == 2:
                 self.position += 34

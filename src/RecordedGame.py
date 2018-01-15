@@ -31,8 +31,8 @@ class RecordedGame(object):
         self.resource_pack = None
 
         # RecAnalyst options.
-        self.options = options
-        self.options.update({'translator': None})
+        self.options = {'translator': 'en'}
+        self.options.update(options)
 
         # Set the file name and file pointer/handle/resource.
         self.filename = filename
