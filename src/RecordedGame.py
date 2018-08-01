@@ -32,7 +32,7 @@ class RecordedGame(object):
         self.resource_pack = None
 
         # RecAnalyst options.
-        self.options = {'translator': 'en'}
+        self.options = {'translator': BasicTranslator()}
         self.options.update(options)
 
         # Set the file name and file pointer/handle/resource.
@@ -40,10 +40,6 @@ class RecordedGame(object):
 
         if not self.fp:
             self.open()
-
-        # Parse options and defaults.
-        if not self.options['translator']:
-            self.options['translator'] = BasicTranslator()
 
         # Set default resource pack. The VersionAnalyzer could be used in the
         # future to detect which resource pack to use, should support for SWGB
