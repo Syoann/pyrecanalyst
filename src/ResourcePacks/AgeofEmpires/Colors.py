@@ -1,5 +1,5 @@
 import os
-from Unit import Unit
+from ResourcePacks.AgeofEmpires.Unit import Unit
 
 class Colors(object):
     """Utilities for colors of things in Age of Empires."""

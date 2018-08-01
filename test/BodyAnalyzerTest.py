@@ -4,8 +4,9 @@
 import glob
 import os
 import unittest
+import sys
 
-
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from RecordedGame import RecordedGame
 from Model.Tribute import Tribute

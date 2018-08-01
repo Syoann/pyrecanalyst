@@ -43,7 +43,7 @@ class BodyAnalyzer(Analyzer):
     META_CHAT = -1
 
     # Resignation command ID.
-    COMMAND_RESIGN = int('0x0B', 16)
+    COMMAND_RESIGN = int('0x0b', 16)
 
     # Research command ID.
     COMMAND_RESEARCH = int('0x65', 16)
@@ -148,11 +148,12 @@ class BodyAnalyzer(Analyzer):
 
                 # player resign
                 if command == self.COMMAND_RESIGN:
-                    player_index = ord(self.body[self.position])
                     player_number = ord(self.body[self.position + 1])
                     disconnected = ord(self.body[self.position + 2])
                     self.position += 3
-                    player = players_by_index[player_index]
+
+                    player = players_by_index[player_number]
+
                     if player and player.resign_time == 0:
                         player.resign_time = self.current_time
                         message = player.name + ' resigned'

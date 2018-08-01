@@ -26,6 +26,7 @@ class Data(object):
         self.u2 = None
 
 
+
 class PlayerStats(object):
     """Player statistics"""
     def __init__(self):

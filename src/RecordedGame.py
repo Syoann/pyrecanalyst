@@ -9,6 +9,7 @@ from Analyzers.HeaderAnalyzer import HeaderAnalyzer
 from Analyzers.MapDataAnalyzer import MapDataAnalyzer
 from ResourcePacks.AgeOfEmpires import AgeOfEmpires
 from Processors.MapImage import MapImage
+from Processors.ResearchImage import ResearchImage
 from Processors.Achievements import Achievements
 
 
@@ -115,6 +116,11 @@ class RecordedGame(object):
         proc = MapImage(self, options)
         return proc.run()
 
+    def research_image(self, options={}):
+        """Render a research chronology for all players"""
+        proc = ResearchImage(self, options)
+        return proc.run()
+
     def teams(self):
         """Get the teams that played in this recorded game."""
         return self.header().teams
@@ -155,7 +161,7 @@ class RecordedGame(object):
         return proc.run()
 
     def get_translate_key(self, args):
-        """Get a translate key for use with Symfony or Laravel Translations."""
+        """Get a translate key."""
         # Game version names are in their own file, not in with resource packs.
         if args[0] == 'game_versions':
             packname = 'game_versions'

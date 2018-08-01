@@ -188,10 +188,10 @@ class HeaderAnalyzer(Analyzer):
         for i in range(0, 8):
             team_indices[i] = ord(self.header[self.position + i])
 
-        self.position += 8
-
         for i, player in enumerate(analysis.players):
             player.team_index = team_indices[i] - 1
+
+        self.position += 8
 
         restore = self.position
 
@@ -204,8 +204,6 @@ class HeaderAnalyzer(Analyzer):
             self.position += 1
 
         reveal_map = self.read_header('l', 4)
-
-
 
         self.position += 4
         map_size = self.read_header('l', 4)
@@ -497,14 +495,14 @@ class HeaderAnalyzer(Analyzer):
                     team = Team()
                     team.add_player(player)
                     teams.append(team)
-                    teams_by_index[player.team_index] = team
+                    team._index = player.team_index
             else:
                 if player.team_index in teams_by_index:
                     teams_by_index[player.team_index].add_player(player)
                 else:
                     team = Team()
                     team.add_player(player)
+                    team._index = player.team_index
                     teams.append(team)
-                    teams_by_index[player.team_index] = team
 
         return teams

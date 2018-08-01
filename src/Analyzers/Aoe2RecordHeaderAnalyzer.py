@@ -22,6 +22,11 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
         data['datasets'] = datasets
         data['difficulty'] = self.read_header('l', 4)
         data['map_size'] = self.read_header('l', 4)
+
+        # Unknown value (added in HD 5.7)
+        if version >= 1006.0:
+            unknown = self.read_header('l', 4)
+
         data['map_id'] = self.read_header('l', 4)
         data['reveal_map'] = self.read_header('l', 4)
         data['victory_type'] = self.read_header('l', 4)
@@ -131,11 +136,17 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
             if i >= num_players:
                 # Skip empty players.
                 self.position += 48
-                if version >= 1005.0:
+                if version >= 1006.0:
+                    self.position += 5
+                elif version >= 1005.0:
                     self.position += 4
                 continue
 
+            if version >= 1006.0:
+                self.position += 1
+
             self.position += 2
+
             # Hash of data files.
             dat_crc = self.read_header('l', 4)
             mp_version = ord(self.header[self.position])
@@ -153,7 +164,7 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
             humanity = self.read_header('l', 4)
             steam_id = self.read_header('<Q', 8)
             player_index = self.read_header('l', 4)
-            unknown = self.read_header('l', 4)  # Seems to be constant 3 among all players so far...
+            unknown = self.read_header('l', 4)  # Seems to be constant among all players so far...
             scenario_index = self.read_header('l', 4)
 
             players.update({

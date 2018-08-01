@@ -1,3 +1,5 @@
+import operator
+
 from Model.Team import Team
 from Model.Research import Research
 from Model.InitialState import InitialState
@@ -127,7 +129,7 @@ class Player():
         self.researches_by_id[id] = Research(self.rec, id, time)
 
     def researches(self):
-        return sorted(self.researches_by_id.values(), key=lambda x: x.time)
+        return sorted(self.researches_by_id.values(), key=lambda x: x.time())
 
     def civ_name(self):
         """Get the name of this player's civilization."""

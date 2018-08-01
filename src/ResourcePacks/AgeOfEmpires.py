@@ -1,8 +1,8 @@
 # coding: utf-8
 
 from ResourcePacks.ResourcePack import ResourcePack
-from AgeofEmpires.Map import Map
-from AgeofEmpires.Unit import Unit
+from ResourcePacks.AgeofEmpires.Map import Map
+from ResourcePacks.AgeofEmpires.Unit import Unit
 from ResourcePacks.AgeofEmpires.Colors import Colors
 from ResourcePacks.AgeofEmpires.Civilization import Civilization
 
