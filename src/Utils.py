@@ -4,7 +4,7 @@ class Utils(object):
     @staticmethod
     def format_game_time(time, format='%02d:%02d:%02d'):
         """Format a game time as "HH:MM:SS"."""
-        if time == 0:
+        if time <= 0:
             return '-'
 
         hour = int(time / 1000 / 3600)
