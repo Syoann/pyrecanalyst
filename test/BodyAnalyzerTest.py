@@ -1,12 +1,11 @@
 #! /usr/bin/env python
-# coding: utf-8
 
 import glob
 import os
 import unittest
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), os.pardir, "src"))
 
 from RecordedGame import RecordedGame
 from Model.Tribute import Tribute
@@ -34,9 +33,9 @@ class BodyAnalyzerTest(unittest.TestCase):
         rec = RecordedGame(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'recs/versions/up1.4.mgz'))
         messages = rec.run_analyzer(BodyAnalyzer()).chat_messages
         # Rating messages should belong to a player.
-        self.assertEquals(messages[0].group, 'Rating')
-        self.assertEquals(messages[0].msg, '2212')
-        self.assertEquals(messages[0].player.name, 'Zuppi')
+        self.assertEqual(messages[0].group, 'Rating')
+        self.assertEqual(messages[0].msg, '2212')
+        self.assertEqual(messages[0].player.name, 'Zuppi')
 
     # Check that tributes have the correct properties and associated players.
     def test_tributes(self):

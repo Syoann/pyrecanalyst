@@ -1,27 +1,23 @@
-#! /usr/bin/env python
-# coding: utf-8
-
 from BasicTranslator import BasicTranslator
 from StreamExtractor import StreamExtractor
 from Analyzers.BodyAnalyzer import BodyAnalyzer
 from Analyzers.VersionAnalyzer import VersionAnalyzer
 from Analyzers.HeaderAnalyzer import HeaderAnalyzer
-from Analyzers.MapDataAnalyzer import MapDataAnalyzer
 from ResourcePacks.AgeOfEmpires import AgeOfEmpires
 from Processors.MapImage import MapImage
 from Processors.ResearchImage import ResearchImage
 from Processors.Achievements import Achievements
 
 
-class Result(object):
+class Result:
     def __init__(self):
         self.analysis= None
         self.position = None
 
 
-class RecordedGame(object):
+class RecordedGame:
     """Create a recorded game analyser."""
-    def __init__(self, filename=None, options={}):
+    def __init__(self, filename=None, options=None):
         # Completed analyses.
         self.analyses = {}
 
@@ -33,7 +29,9 @@ class RecordedGame(object):
 
         # RecAnalyst options.
         self.options = {'translator': BasicTranslator()}
-        self.options.update(options)
+
+        if options is not None:
+            self.options.update(options)
 
         # Set the file name and file pointer/handle/resource.
         self.filename = filename
@@ -49,9 +47,13 @@ class RecordedGame(object):
         # Initialize the header/body extractor.
         self.streams = StreamExtractor(self.fp, options)
 
+    def __del__(self):
+        if self.fp:
+            self.fp.close()
+
     def open(self):
         """Create a file handle for the recorded game file."""
-        self.fp = open(self.filename, 'r')
+        self.fp = open(self.filename, 'rb')
 
     def get_resource_pack(self):
         """Get the current resource pack."""
@@ -107,15 +109,13 @@ class RecordedGame(object):
         """Get the result of analysis of the recorded game body."""
         return self.get_analysis(BodyAnalyzer).analysis
 
-    def map_image(self, options={}):
+    def map_image(self, options=None):
         """Render a map image."""
-        proc = MapImage(self, options)
-        return proc.run()
+        return MapImage(self, options).run()
 
-    def research_image(self, options={}):
+    def research_image(self, options=None):
         """Render a research chronology for all players"""
-        proc = ResearchImage(self, options)
-        return proc.run()
+        return ResearchImage(self, options).run()
 
     def teams(self):
         """Get the teams that played in this recorded game."""
@@ -151,7 +151,7 @@ class RecordedGame(object):
             if player.index == id:
                 return player
 
-    def achievements(self, options={}):
+    def achievements(self, options=None):
         """Get the player achievements."""
         proc = Achievements(self, options)
         return proc.run()

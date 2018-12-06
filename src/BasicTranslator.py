@@ -1,7 +1,7 @@
 import os
 
 
-class BasicTranslator(object):
+class BasicTranslator:
     """
     Super tiny default translator for when RecAnalyst is used outside of Laravel.
     Uses translations provided with RecAnalyst, with no possibility of
@@ -13,19 +13,28 @@ class BasicTranslator(object):
         self.locale = locale
         self.translations = {}
 
-    def trans(self, file, keys):
-        if not file in self.translations:
-            current = self.get_file_path(self.locale, file)
+    def __del__(self):
+        ( f.close() for f in self.translations.values() )
+
+    def trans(self, filename, keys):
+        if not filename in self.translations:
+            current = self.get_file_path(self.locale, filename)
             # Default to English
             if not os.path.isfile(current):
-                current = self.get_file_path('en', file)
-            translation_table = eval(open(current).read())
-            self.translations[file] = translation_table
-        return self.get(self.translations[file], keys)
+                current = self.get_file_path('en', filename)
 
-    def get_file_path(self, locale, file):
+            with open(current) as fh:
+                translation_table = eval(fh.read())
+                self.translations[filename] = translation_table
+
+        return self.get(self.translations[filename], keys)
+
+    def get_file_path(self, locale, filename):
         """Get the path to a translation file."""
-        return os.path.dirname(os.path.abspath(__file__)) + '/../resources/lang/' + locale + '/' + file + '.py'
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            os.pardir, 'resources', 'lang', locale, filename + '.py')
+        return os.path.normpath(path)
+
 
     def get(self, arr, lst):
         """Get a value from a property list."""

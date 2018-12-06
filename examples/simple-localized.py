@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# coding: utf-8
 
 """
 Outputs a bunch of information about the recorded game, in a specified

@@ -1,4 +1,4 @@
-class Map(object):
+class Map:
     """Some map constants."""
     ARABIA = 9
     ARCHIPELAGO = 10

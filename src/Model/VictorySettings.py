@@ -1,7 +1,4 @@
-# coding: utf-8
-
-
-class VictorySettings(object):
+class VictorySettings:
     """Victory implements game's victory settings."""
     STANDARD = 0
     CONQUEST = 1
@@ -32,8 +29,9 @@ class VictorySettings(object):
 
         if self.mode == VictorySettings.TIMELIMIT:
             if self.time_limit:
-                return result + ' (' + str(self.time_limit) + ')'
+                return "{} ({})".format(result, self.time_limit)
         elif self.mode == VictorySettings.SCORELIMIT:
             if (self.score_limit):
-                return result + ' (' + str(self.score_limit) + ')'
+                return "{} ({})".format(result, self.score_limit)
+
         return result

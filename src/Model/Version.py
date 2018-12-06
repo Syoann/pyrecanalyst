@@ -1,4 +1,5 @@
-class Version(object):
+class Version:
+    """Version of the game."""
     # Version ID for unknown game versions.
     VERSION_UNKNOWN = 0
 
@@ -67,6 +68,9 @@ class Version(object):
         self.rec = rec
         self.version_string = version_string
         self.sub_version = sub_version
+
+    def __str__(self):
+        return self.version_string + ':' + str(self.sub_version)
 
     def name(self):
         """Get a localised version name."""

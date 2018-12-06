@@ -1,4 +1,4 @@
-class Tile():
+class Tile:
     """Represents a map tile."""
     def __init__(self, x, y, terrain, elevation):
         # X coordinate

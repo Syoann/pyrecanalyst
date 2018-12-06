@@ -1,8 +1,5 @@
-# coding: utf-8
-
-
-class Unit():
-    """Unit represents a unit object in the game."""
+class Unit:
+    """Represents a unit object in the game."""
 
     def __init__(self, rec, id, position=(0, 0)):
         """Create a new Unit."""

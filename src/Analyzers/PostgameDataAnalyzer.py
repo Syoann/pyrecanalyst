@@ -1,6 +1,7 @@
 from Analyzers.Analyzer import Analyzer
 
-class Data(object):
+
+class Data:
     """Game data"""
     def __init__(self):
         self.scenario_filename = None
@@ -26,8 +27,7 @@ class Data(object):
         self.u2 = None
 
 
-
-class PlayerStats(object):
+class PlayerStats:
     """Player statistics"""
     def __init__(self):
         self.name = None
@@ -46,8 +46,7 @@ class PlayerStats(object):
         self.society_stats = None
 
 
-
-class MilitaryStats(object):
+class MilitaryStats:
     """Military statistics"""
     def __init__(self):
         self.score = None
@@ -64,8 +63,7 @@ class MilitaryStats(object):
         self.player_buildings_razed = {}
 
 
-
-class EconomyStats(object):
+class EconomyStats:
     """Economic statistics"""
     def __init__(self):
         self.score = None
@@ -81,8 +79,7 @@ class EconomyStats(object):
         self.player_tribute_sent = {}
 
 
-
-class TechStats(object):
+class TechStats:
     """Technology statistics"""
     def __init__(self):
         self.score = None
@@ -95,8 +92,7 @@ class TechStats(object):
         self.research_percent = None
 
 
-
-class SocietyStats(object):
+class SocietyStats:
     """Society statistics"""
     def __init__(self):
         self.score = None
@@ -107,7 +103,6 @@ class SocietyStats(object):
         self.villager_high = None
 
 
-
 class PostgameDataAnalyzer(Analyzer):
     """Analyze a UserPatch post-game data block, containing achievements."""
     def run(self):
@@ -116,45 +111,44 @@ class PostgameDataAnalyzer(Analyzer):
 
         self.position += 3 # Skip body command metadata.
         data.scenario_filename = self.read_body_raw(32).rstrip()
-        data.num_players = self.read_body('l', 4)
-        data.duration = self.read_body('l', 4)
+        data.num_players = self.read_body('<l', 4)
+        data.duration = self.read_body('<l', 4)
         self.position += 1
-        data.allow_cheats = ord(self.body[self.position])
+        data.allow_cheats = int(self.body[self.position])
         self.position += 1
-        data.complete = ord(self.body[self.position])
+        data.complete = int(self.body[self.position])
         self.position += 10 # Always zeros?
         data.u0 = self.read_body('f', 4) # Always 2.0?
         self.position += 1
-        data.map_size = ord(self.body[self.position])
+        data.map_size = int(self.body[self.position])
         self.position += 1
-        data.map_id = ord(self.body[self.position])
+        data.map_id = int(self.body[self.position])
         self.position += 1
-        data.population = ord(self.body[self.position])
+        data.population = int(self.body[self.position])
+        self.position += 2
+        data.victory = int(self.body[self.position])
         self.position += 1
+        data.starting_age = int(self.body[self.position])
         self.position += 1
-        data.victory = ord(self.body[self.position])
+        data.resources = int(self.body[self.position])
         self.position += 1
-        data.starting_age = ord(self.body[self.position])
+        data.all_techs = int(self.body[self.position])
         self.position += 1
-        data.resources = ord(self.body[self.position])
+        data.team_together = int(self.body[self.position])
         self.position += 1
-        data.all_techs = ord(self.body[self.position])
+        data.reveal_map = int(self.body[self.position])
         self.position += 1
-        data.team_together = ord(self.body[self.position])
+        data.is_deatch_match = int(self.body[self.position])
         self.position += 1
-        data.reveal_map = ord(self.body[self.position])
+        data.is_regicide = int(self.body[self.position])
         self.position += 1
-        data.is_deatch_match = ord(self.body[self.position])
+        data.u1 = int(self.body[self.position])
         self.position += 1
-        data.is_regicide = ord(self.body[self.position])
+        data.lock_teams = int(self.body[self.position])
         self.position += 1
-        data.u1 = ord(self.body[self.position])
+        data.lock_speed = int(self.body[self.position])
         self.position += 1
-        data.lock_teams = ord(self.body[self.position])
-        self.position += 1
-        data.lock_speed = ord(self.body[self.position])
-        self.position += 1
-        data.u2 = ord(self.body[self.position])
+        data.u2 = int(self.body[self.position])
 
         players = {}
         for i in range(0, 8):
@@ -167,21 +161,21 @@ class PostgameDataAnalyzer(Analyzer):
 
             player_stats.total_scores = total_scores
             self.position += 1
-            player_stats.victory = ord(self.body[self.position])
+            player_stats.victory = int(self.body[self.position])
             self.position += 1
-            player_stats.civ_id = ord(self.body[self.position])
+            player_stats.civ_id = int(self.body[self.position])
             self.position += 1
-            player_stats.color_id = ord(self.body[self.position])
+            player_stats.color_id = int(self.body[self.position])
             self.position += 1
-            player_stats.team = ord(self.body[self.position])
+            player_stats.team = int(self.body[self.position])
             self.position += 1
-            player_stats.allies_count = ord(self.body[self.position])
+            player_stats.allies_count = int(self.body[self.position])
             self.position += 1  # Always -1?
             self.position += 1
-            player_stats.mvp = ord(self.body[self.position])
+            player_stats.mvp = int(self.body[self.position])
             self.position += 3  # Padding?
             self.position += 1
-            player_stats.result = ord(self.body[self.position])
+            player_stats.result = int(self.body[self.position])
             self.position += 3  # Padding?
 
             military_stats = MilitaryStats()
@@ -208,10 +202,10 @@ class PostgameDataAnalyzer(Analyzer):
             economy_stats = EconomyStats()
             economy_stats.score = self.read_body('H', 2)
             economy_stats.u0 = self.read_body('H', 2) # Probably padding?
-            economy_stats.food_collected = self.read_body('l', 4)
-            economy_stats.wood_collected = self.read_body('l', 4)
-            economy_stats.stone_collected = self.read_body('l', 4)
-            economy_stats.gold_collected = self.read_body('l', 4)
+            economy_stats.food_collected = self.read_body('<l', 4)
+            economy_stats.wood_collected = self.read_body('<l', 4)
+            economy_stats.stone_collected = self.read_body('<l', 4)
+            economy_stats.gold_collected = self.read_body('<l', 4)
             economy_stats.tribute_sent = self.read_body('H', 2)
             economy_stats.tribute_received = self.read_body('H', 2)
             economy_stats.trade_profit = self.read_body('H', 2)
@@ -226,15 +220,15 @@ class PostgameDataAnalyzer(Analyzer):
             tech_stats = TechStats()
             tech_stats.score = self.read_body('H', 2)
             tech_stats.u0 = self.read_body('H', 2)  # Probably padding?
-            tech_stats.feudal_time = self.read_body('l', 4)
-            tech_stats.castle_time = self.read_body('l', 4)
-            tech_stats.imperial_time = self.read_body('l', 4)
+            tech_stats.feudal_time = self.read_body('<l', 4)
+            tech_stats.castle_time = self.read_body('<l', 4)
+            tech_stats.imperial_time = self.read_body('<l', 4)
             self.position += 1
-            tech_stats.map_exploration = ord(self.body[self.position])
+            tech_stats.map_exploration = int(self.body[self.position])
             self.position += 1
-            tech_stats.research_count = ord(self.body[self.position])
+            tech_stats.research_count = int(self.body[self.position])
             self.position += 1
-            tech_stats.research_percent = ord(self.body[self.position])
+            tech_stats.research_percent = int(self.body[self.position])
             player_stats.tech_stats = tech_stats
 
             self.position += 1  # Padding
@@ -242,13 +236,13 @@ class PostgameDataAnalyzer(Analyzer):
             society_stats = SocietyStats()
             society_stats.score = self.read_body('H', 2)
             self.position += 1
-            society_stats.total_wonders = ord(self.body[self.position])
+            society_stats.total_wonders = int(self.body[self.position])
             self.position += 1
-            society_stats.total_castles = ord(self.body[self.position])
+            society_stats.total_castles = int(self.body[self.position])
             self.position += 1
-            society_stats.relics_captured = ord(self.body[self.position])
+            society_stats.relics_captured = int(self.body[self.position])
             self.position += 1
-            society_stats.u0 = ord(self.body[self.position])
+            society_stats.u0 = int(self.body[self.position])
             society_stats.villager_high = self.read_body('H', 2)
             player_stats.society_stats = society_stats
 

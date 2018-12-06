@@ -37,12 +37,12 @@ class HeaderAnalyzer(Analyzer):
     def run(self):
         """Run the analysis."""
 
-        constant2 = struct.pack('cccccccc', '\x9A', '\x99', '\x99', '\x99', '\x99', '\x99', '\xf9', '\x3F')
-        separator = struct.pack('cccc', '\x9D', '\xFF', '\xFF', '\xFF')
-        scenario_constant = struct.pack('cccc', '\xf6', '\x28', '\x9C', '\x3F')
-        aok_separator = struct.pack('cccc', '\x9A', '\x99', '\x99', '\x3F')
-        aoe2record_scenario_separator = struct.pack('cccc', '\xaE', '\x47', '\xa1', '\x3F')
-        aoe2record_header_separator = struct.pack('cccc', '\xa3', '\x5F', '\x02', '\x00')
+        constant2 = struct.pack('cccccccc', b'\x9A', b'\x99', b'\x99', b'\x99', b'\x99', b'\x99', b'\xf9', b'\x3F')
+        separator = struct.pack('cccc', b'\x9D', b'\xFF', b'\xFF', b'\xFF')
+        scenario_constant = struct.pack('cccc', b'\xf6', b'\x28', b'\x9C', b'\x3F')
+        aok_separator = struct.pack('cccc', b'\x9A', b'\x99', b'\x99', b'\x3F')
+        aoe2record_scenario_separator = struct.pack('cccc', b'\xaE', b'\x47', b'\xa1', b'\x3F')
+        aoe2record_header_separator = struct.pack('cccc', b'\xa3', b'\x5F', b'\x02', b'\x00')
 
         rec = self.rec
         self.analysis = Analysis()
@@ -71,9 +71,10 @@ class HeaderAnalyzer(Analyzer):
             scenario_header_pos -= 4
 
         if version.is_aoe2_record:
+            print("ok")
             aoe2record_header = self.read(Aoe2RecordHeaderAnalyzer)
 
-        include_ai = self.read_header('L', 4)
+        include_ai = self.read_header('<L', 4)
         if include_ai:
             self.skip_ai()
 
@@ -82,7 +83,8 @@ class HeaderAnalyzer(Analyzer):
             self.position += 4
             game_speed = aoe2record_header['game_speed']
         else:
-            game_speed = self.read_header('l', 4)
+            game_speed = self.read_header('<l', 4)
+
 
         # These bytes contain the game speed again several times over, as ints
         # and as floats (On normal speed: 150, 1.5 and 0.15). Why?!
@@ -93,7 +95,7 @@ class HeaderAnalyzer(Analyzer):
             game_mode = aoe2record_header['is_multi_player']
             self.position += 4
         else:
-            num_players = ord(self.header[self.position])
+            num_players = int(self.header[self.position])
             self.position += 1
             num_players -= 1
             # - 1, because player #0 is GAIA.
@@ -104,18 +106,9 @@ class HeaderAnalyzer(Analyzer):
             game_mode = self.read_header('<H', 2)
 
 
-        # TODO what are these?
-        # Something is up here because we do '+=46' just below which makes for '=58' anyway.
-        # For some reason PHP runs out of memory if I do it differently...
-        if version.sub_version >= 12.50:
-            self.position += 12
-
         analysis.num_players = num_players
 
-        if version.is_aoe2_record and version.sub_version >= 12.49:
-            self.position += 46
-        else:
-            self.position += 58
+        self.position += 58
 
         if version.is_aoe2_record:
             self.position += 1
@@ -129,6 +122,7 @@ class HeaderAnalyzer(Analyzer):
         player_info_pos = self.position
 
         self.analysis.scenario_filename = None
+
         if scenario_header_pos > 0:
             self.position = scenario_header_pos
             self.read_scenario_header()
@@ -158,10 +152,10 @@ class HeaderAnalyzer(Analyzer):
             self.position += 4
             map_id = aoe2record_header['map_id']
         elif not version.is_aok:
-            map_id = self.read_header('l', 4)
+            map_id = self.read_header('<l', 4)
 
-        difficulty = self.read_header('l', 4)
-        lock_teams = self.read_header('L', 4)
+        difficulty = self.read_header('<l', 4)
+        lock_teams = self.read_header('<L', 4)
 
         players = self.read(PlayerMetaAnalyzer)
 
@@ -176,7 +170,7 @@ class HeaderAnalyzer(Analyzer):
         # Other player analyzers will fall back to self data in those cases.
         if version.is_aoe2_record and 'players' in aoe2record_header:
             for i, player in enumerate(players):
-                for key, value in aoe2record_header['players'].iteritems():
+                for key, value in aoe2record_header['players'].items():
                     setattr(player, key, value)
 
         analysis.players = players
@@ -186,7 +180,7 @@ class HeaderAnalyzer(Analyzer):
 
         team_indices = {}
         for i in range(0, 8):
-            team_indices[i] = ord(self.header[self.position + i])
+            team_indices[i] = self.header[self.position + i]
 
         for i, player in enumerate(analysis.players):
             player.team_index = team_indices[i] - 1
@@ -203,15 +197,15 @@ class HeaderAnalyzer(Analyzer):
         if version.sub_version < 12.3:
             self.position += 1
 
-        reveal_map = self.read_header('l', 4)
+        reveal_map = self.read_header('<l', 4)
 
         self.position += 4
-        map_size = self.read_header('l', 4)
-        pop_limit = self.read_header('l', 4)
+        map_size = self.read_header('<l', 4)
+        pop_limit = self.read_header('<l', 4)
 
         if version.is_mgx:
-            game_type = ord(self.header[self.position])
-            lock_diplomacy = ord(self.header[self.position + 1])
+            game_type = self.header[self.position]
+            lock_diplomacy = self.header[self.position + 1]
             self.position += 2
 
         if version.sub_version >= 11.96:
@@ -270,13 +264,13 @@ class HeaderAnalyzer(Analyzer):
             players_by_number[player.number] = player
 
         messages = []
-        message_count = self.read_header('l', 4)
+        message_count = self.read_header('<l', 4)
         for i in range(0, message_count):
-            length = self.read_header('l', 4)
+            length = self.read_header('<l', 4)
             if length <= 0:
                 continue
 
-            chat = self.read_header_raw(length)
+            chat = self.read_header_raw(length).decode('latin-1')
 
             # pre-game chat messages are stored as "@#%d_player_name: Message",
             # where %d is a digit from 1 to 8 indicating player's index (or
@@ -301,7 +295,7 @@ class HeaderAnalyzer(Analyzer):
         num_ai_strings = self.read_header('<H', 2)
         self.position += 4
         for i in range(0, num_ai_strings):
-            length = self.read_header('l', 4)
+            length = self.read_header('<l', 4)
             self.position += length
 
         self.position += 6
@@ -368,7 +362,7 @@ class HeaderAnalyzer(Analyzer):
         if self.version.is_hd_patch4:
             condition_size += 2 * 4  # 2 ints
 
-        num_triggers = self.read_header('l', 4)
+        num_triggers = self.read_header('<l', 4)
         for i in range(0, num_triggers):
             self.position += 4 + (2 * 1) + (3 * 4)  # int, 2 bools, 3 ints
             description_length = self.read_header('<l', 4)
@@ -454,17 +448,17 @@ class HeaderAnalyzer(Analyzer):
     def read_messages(self):
         """Read messages."""
         length = self.read_header('<H', 2)
-        instructions = self.read_header_raw(length).rstrip("\0")
+        instructions = self.read_header_raw(length).rstrip(b'\x00').decode(errors='ignore') # FIXME
         length = self.read_header('<H', 2)
-        hints = self.read_header_raw(length).rstrip("\0")
+        hints = self.read_header_raw(length).rstrip(b'\x00').decode()
         length = self.read_header('<H', 2)
-        victory = self.read_header_raw(length).rstrip("\0")
+        victory = self.read_header_raw(length).rstrip(b'\x00').decode()
         length = self.read_header('<H', 2)
-        loss = self.read_header_raw(length).rstrip("\0")
+        loss = self.read_header_raw(length).rstrip(b'\x00').decode()
         length = self.read_header('<H', 2)
-        history = self.read_header_raw(length).rstrip("\0")
+        history = self.read_header_raw(length).rstrip(b'\x00').decode()
         length = self.read_header('<H', 2)
-        scouts = self.read_header_raw(length).rstrip("\0")
+        scouts = self.read_header_raw(length).rstrip(b'\x00').decode()
         return {'instructions': instructions,
                 'hints': hints,
                 'victory': victory,

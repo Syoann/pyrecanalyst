@@ -1,6 +1,3 @@
-#! /usr/bin/env python
-# coding: utf-8
-
 import struct
 
 from Model.Player import Player
@@ -57,11 +54,12 @@ class PlayerMetaAnalyzer(Analyzer):
         player = Player(self.rec)
         player.number = i
         player.index = self.read_header('<l', 4)
+
         human = self.read_header('<l', 4)
         length = self.read_header('<L', 4)
 
         if length:
-            player.name = self.read_header_raw(length)
+            player.name = self.read_header_raw(length).decode('latin-1')
         else:
             player.name = ''
 
@@ -75,8 +73,8 @@ class PlayerMetaAnalyzer(Analyzer):
         """Find the position of the small player metadata block."""
         version = self.get(VersionAnalyzer)
 
-        constant2 = struct.pack('cccccccc', '\x9A', '\x99', '\x99', '\x99', '\x99', '\x99', '\xF9', '\x3F')
-        separator = struct.pack('cccc', '\x9D', '\xFF', '\xFF', '\xFF')
+        constant2 = struct.pack('cccccccc', b'\x9A', b'\x99', b'\x99', b'\x99', b'\x99', b'\x99', b'\xF9', b'\x3F')
+        separator = struct.pack('cccc', b'\x9D', b'\xFF', b'\xFF', b'\xFF')
 
         players_by_index = {}
 

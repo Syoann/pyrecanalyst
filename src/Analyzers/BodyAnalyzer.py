@@ -1,4 +1,3 @@
-import copy
 import math
 import struct
 
@@ -110,7 +109,7 @@ class BodyAnalyzer(Analyzer):
             players_by_number[player.number] = player
             players_by_index[player.index] = player
 
-        self.players_by_number = copy.deepcopy(players_by_number)
+        self.players_by_number = players_by_number
 
         size = len(self.body)
 
@@ -120,10 +119,10 @@ class BodyAnalyzer(Analyzer):
             if version.is_mgl and self.position == 0:
                 operation_type = self.OP_META2
             else:
-                operation_type = self.read_body('L', 4)
+                operation_type = self.read_body('<L', 4)
 
             if operation_type == self.OP_META or operation_type == self.OP_META2:
-                command = self.read_body('l', 4)
+                command = self.read_body('<l', 4)
                 if command == self.META_GAME_START:
                     self.process_game_start()
                 elif command == self.META_CHAT:
@@ -133,23 +132,23 @@ class BodyAnalyzer(Analyzer):
                 # speedup just from doing this inline (and not in a separate
                 # method), and by using `unpack` and manual position increments
                 # instead of `read_body`.
-                data = struct.unpack('ll', self.body[self.position:self.position + 8])
-                self.current_time += data[0]  # self.read_body('l', 4)
-                unknown = data[1]  # self.read_body('L', 4)
+                data = struct.unpack('<ll', self.body[self.position:self.position + 8])
+                self.current_time += data[0]  # self.read_body('<l', 4)
+                unknown = data[1]  # self.read_body('<l', 4)
                 if unknown == 0:
                     self.position += 28
 
                 self.position += 20
             elif operation_type == self.OP_COMMAND:
-                length = self.read_body('l', 4)
+                length = self.read_body('<l', 4)
                 next_position = self.position + length
-                command = ord(self.body[self.position])
+                command = self.body[self.position]
                 self.position += 1
 
                 # player resign
                 if command == self.COMMAND_RESIGN:
-                    player_number = ord(self.body[self.position + 1])
-                    disconnected = ord(self.body[self.position + 2])
+                    player_number = int(self.body[self.position + 1])
+                    disconnected = int(self.body[self.position + 2])
                     self.position += 3
 
                     player = players_by_index[player_number]
@@ -161,7 +160,7 @@ class BodyAnalyzer(Analyzer):
                 # research
                 elif command == self.COMMAND_RESEARCH:
                     self.position += 3
-                    building_id = self.read_body('l', 4)
+                    building_id = self.read_body('<l', 4)
                     player_id = self.read_body('<H', 2)
                     research_id = self.read_body('<H', 2)
                     player = players_by_index[player_id]
@@ -187,7 +186,7 @@ class BodyAnalyzer(Analyzer):
                 # training unit
                 elif command == self.COMMAND_TRAIN:
                     self.position += 3
-                    building_id = self.read_body('l', 4)
+                    building_id = self.read_body('<l', 4)
                     unit_type = self.read_body('<H', 2)
                     amount = self.read_body('<H', 2)
 
@@ -221,11 +220,11 @@ class BodyAnalyzer(Analyzer):
                         self.buildings[player_id][building_type] += 1
                 # tributing
                 elif command == self.COMMAND_TRIBUTE:
-                    player_id_from = ord(self.body[self.position])
+                    player_id_from = int(self.body[self.position])
                     self.position += 1
-                    player_id_to = ord(self.body[self.position])
+                    player_id_to = int(self.body[self.position])
                     self.position += 1
-                    resource_id = ord(self.body[self.position])
+                    resource_id = int(self.body[self.position])
                     self.position += 1
 
                     player_from = players_by_index[player_id_from]
@@ -273,28 +272,29 @@ class BodyAnalyzer(Analyzer):
     def process_game_start(self):
         if self.version.is_mgl:
             self.position += 28
-            ver = ord(self.body[self.position])
+            ver = int(self.body[self.position])
             self.position += 4
         else:
             self.position += 20
 
     # Read a chat message.
     def process_chat_message(self):
-        length = self.read_body('l', 4)
+        length = self.read_body('<l', 4)
         if length <= 0:
             return
 
-        chat = self.read_body_raw(length)
+        chat = self.read_body_raw(length).rstrip(b'\x00').decode('latin-1')
 
         # Chat messages are stored as "@#%dPlayerName: Message", where %d is a
         # digit from 1 to 8 indicating player's index (or colour).
         if chat.startswith('@#') and chat[2] >= '1' and chat[2] <= '8':
-            chat = chat.rstrip(' \x00')  # Remove None terminator
+            chat = chat.rstrip()
+            player_number = int(chat[2])
             if chat[3:5] == '--' and chat[-2:] == '--':
                 # Skip messages like "--Warning: You are under attack... --"
                 return
-            elif chat[2] in self.players_by_number:
-                player = self.players_by_number[chat[2]]
+            elif player_number in self.players_by_number:
+                player = self.players_by_number[player_number]
             else:
                 # Shouldn't happen, but we'll let the ChatMessage factory
                 # create a fake player for this message.

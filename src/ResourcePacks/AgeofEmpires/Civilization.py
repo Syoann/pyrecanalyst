@@ -1,7 +1,4 @@
-# coding: utf-8
-
-
-class Civilization(object):
+class Civilization:
     """Utilities for dealing with Age of Empires civilizations."""
     NONE = 0
     BRITONS = 1

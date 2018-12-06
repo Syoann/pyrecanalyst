@@ -1,7 +1,4 @@
-# coding: utf-8
-
-
-class Tribute():
+class Tribute:
     """Represents a resource tribute."""
 
     FOOD = 0

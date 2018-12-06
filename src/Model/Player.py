@@ -1,11 +1,8 @@
-import operator
-
-from Model.Team import Team
 from Model.Research import Research
 from Model.InitialState import InitialState
 
 
-class Player():
+class Player:
     """
     The Player class represents a player in the game. This includes co-op players.
     It does not include players who joined the lobby but didn't launch into
@@ -68,6 +65,9 @@ class Player():
         # and population.
         self.initial_state = InitialState()
 
+    def __str__(self):
+        return self.name
+
     def is_human(self):
         """Returns whether the player is a human player."""
         return self.human
@@ -129,7 +129,7 @@ class Player():
         self.researches_by_id[id] = Research(self.rec, id, time)
 
     def researches(self):
-        return sorted(self.researches_by_id.values(), key=lambda x: x.time())
+        return sorted(self.researches_by_id.values(), key=lambda x: x.time)
 
     def civ_name(self):
         """Get the name of this player's civilization."""

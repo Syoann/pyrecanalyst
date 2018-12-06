@@ -1,19 +1,23 @@
+import functools
+
 from PIL import Image, ImageColor, ImageDraw
 
 from ResourcePacks.AgeofEmpires.Unit import Unit
 
+
 class MapImage(object):
     """Generate a top-down map image that shows the starting state of the game."""
-    def __init__(self, rec, options={}):
+    def __init__(self, rec, options=None):
         # Recorded game file to use.
         self.rec = rec
 
         self.options = {'manager': None,
                         'show_positions': True,
-                        'show_player_units': True,
+                        'show_player_units': False,
                         'show_elevation': False}
 
-        self.options.update(options)
+        if options is not None:
+            self.options.update(options)
 
         self.show_positions = self.options['show_positions']
         self.show_player_units = self.options['show_player_units']
@@ -25,6 +29,8 @@ class MapImage(object):
         map_data = header.map_data
         map_size = len(map_data)
         image = Image.new('RGBA', (map_size, map_size), (255, 255, 255, 0))
+
+        print(map_size)
 
         draw = ImageDraw.Draw(image)
         pixels = image.load()
@@ -103,4 +109,5 @@ class MapImage(object):
                 return True
             return 0
 
-        return sorted(objects, cmp=sorting_func)
+        cmp = functools.cmp_to_key(sorting_func)
+        return sorted(objects, key=cmp)

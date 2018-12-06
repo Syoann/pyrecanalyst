@@ -1,5 +1,5 @@
-class Utils(object):
-    """Miscellaneous utilities for working with RecAnalyst."""
+class Utils:
+    """Miscellaneous utilities"""
 
     @staticmethod
     def format_game_time(time, format='%02d:%02d:%02d'):

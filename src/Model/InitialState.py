@@ -1,4 +1,4 @@
-class InitialState():
+class InitialState:
     """
     InitialState represents the initial state of a player, including resources
     and population.

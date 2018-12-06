@@ -14,18 +14,16 @@ class VersionAnalyzerTest(unittest.TestCase):
         data = self.versions_provider()
 
         for case in data:
-            file = case[0]
-            expected_version = case[1]
-            expected = case[2]
+            file, expected_version, expected = case
 
             rec = RecordedGame(os.path.join(os.path.dirname(__file__), file))
             version = rec.run_analyzer(VersionAnalyzer())
 
-            for prop, value in expected.iteritems():
+            for prop, value in expected.items():
                 try:
                     self.assertEqual(value, getattr(version, prop))
                 except:
-                    print("Expected " + prop + " of file " + file + " to be " + str(value) + "")
+                    print("Expected {} of file {} to be {}".format(prop, file, str(value)))
 
     def versions_provider(self):
         return [

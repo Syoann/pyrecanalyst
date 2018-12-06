@@ -1,5 +1,4 @@
 #! /usr/bin/env python
-# coding: utf-8
 
 """
 This example reads chat messages from a recorded game.
@@ -18,7 +17,7 @@ from Utils import Utils
 
 # Read a recorded game filename from the command line.
 # Default to a test team game.
-filename = sys.argv[1]
+filename = '../test/recs/FluffyFur+yousifr+TheBlackWinds+Mobius_One[Chinese]=VS=MOD3000+Chrazini+ClosedLoop+ [AGM]Wineup[Britons]_1v1_8PlayerCo-op_01222015.mgx2'
 
 if len(sys.argv) > 1:
     filename = sys.argv[1]

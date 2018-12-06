@@ -76,20 +76,20 @@ class PlayerObjectsListAnalyzer(Analyzer):
 
         # Magic byte string signifying the end of the data for a creatable or
         # building object data.
-        self.object_end_separator = struct.pack('cccccccccccc', '\xFF', '\xFF', '\xFF', '\xFF', '\x00', '\x00', '\x80', '\xBF', '\x00', '\x00', '\x80', '\xBF') \
-                                  + struct.pack('cccccccccccc', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF', '\xFF') \
-                                  + struct.pack('cccccc', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00')
+        self.object_end_separator = struct.pack('cccccccccccc', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\x00', b'\x00', b'\x80', b'\xBF', b'\x00', b'\x00', b'\x80', b'\xBF') \
+                                  + struct.pack('cccccccccccc', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\xFF') \
+                                  + struct.pack('cccccc', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00')
         # Magic byte string signifying the end of the data for a creatable or
         # building object data in Age of Kings.
         self.aok_object_end_separator = \
-            struct.pack('ccccccccc', '\xFF', '\xFF', '\xFF', '\xFF', '\x00', '\x00', '\x80', '\xBF', '\x00') \
-            + struct.pack('cccccccc', '\x00', '\x80', '\xBF', '\x00', '\x00', '\x00', '\x00', '\x00')
+            struct.pack('ccccccccc', b'\xFF', b'\xFF', b'\xFF', b'\xFF', b'\x00', b'\x00', b'\x80', b'\xBF', b'\x00') \
+            + struct.pack('cccccccc', b'\x00', b'\x80', b'\xBF', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00')
         # Magic byte string signifying the end of the list of player objects.
         self.player_info_end_separator = \
-            struct.pack('cccccccccccc', '\x00', '\x0B', '\x00', '\x02', '\x00', '\x00', '\x00', '\x02', '\x00', '\x00', '\x00', '\x0B')
+            struct.pack('cccccccccccc', b'\x00', b'\x0B', b'\x00', b'\x02', b'\x00', b'\x00', b'\x00', b'\x02', b'\x00', b'\x00', b'\x00', b'\x0B')
         # Magic byte string for... something?
         self.objects_mid_separator_gaia = \
-            struct.pack('cccccccccc', '\x00', '\x0B', '\x00', '\x40', '\x00', '\x00', '\x00', '\x20', '\x00', '\x00')
+            struct.pack('cccccccccc', b'\x00', b'\x0B', b'\x00', b'\x40', b'\x00', b'\x00', b'\x00', b'\x20', b'\x00', b'\x00')
 
 
     def run(self):
@@ -181,7 +181,7 @@ class PlayerObjectsListAnalyzer(Analyzer):
 
         if self.version.is_mgx:
             self.position += 59
-            is_extended = ord(self.header[self.position])
+            is_extended = int(self.header[self.position])
             self.position += 1  # isExtended
 
             self.position += 4
@@ -201,7 +201,7 @@ class PlayerObjectsListAnalyzer(Analyzer):
         if not self.version.is_mgx:
             self.position += 1
 
-        is_extended = ord(self.header[self.position + 59])
+        is_extended = self.header[self.position + 59]
         if is_extended == 2:
             self.position += 17
 
@@ -211,7 +211,7 @@ class PlayerObjectsListAnalyzer(Analyzer):
             self.position += 1
 
     def read_bird(self):
-        b = ord(self.header[self.position + 204])
+        b = self.header[self.position + 204]
         self.position += 233 - 4
 
         if b:

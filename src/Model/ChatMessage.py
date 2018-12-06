@@ -24,6 +24,9 @@ class ChatMessage():
         # Grou at which this chat is directed (<Team>, <Enemy>, <All>), if any
         self.group = group
 
+    def __str__(self):
+        return ">{}:{}".format(self.player.name, self.msg)
+
     @staticmethod
     def create(time, player, chat):
         """

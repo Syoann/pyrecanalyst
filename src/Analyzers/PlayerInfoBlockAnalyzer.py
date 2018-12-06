@@ -45,7 +45,7 @@ class PlayerInfoBlockAnalyzer(Analyzer):
 
     def analyze_extended(self):
         """Analyze an extended player info block, including unit data."""
-        exist_object_separator = struct.pack('ccccccccc', '\x0B', '\x00', '\x08', '\x00', '\x00', '\x00', '\x02', '\x00', '\x00')
+        exist_object_separator = struct.pack('ccccccccc', b'\x0B', b'\x00', b'\x08', b'\x00', b'\x00', b'\x00', b'\x02', b'\x00', b'\x00')
 
         pack = self.rec.get_resource_pack()
 
@@ -57,6 +57,7 @@ class PlayerInfoBlockAnalyzer(Analyzer):
         players_by_index = {}
         for player in players:
             players_by_index[player.index] = player
+
 
         # Add GAIA
         num_players = self.analysis.num_players + 1
@@ -87,51 +88,51 @@ class PlayerInfoBlockAnalyzer(Analyzer):
             self.position += player_name_len
 
             self.position += 1  # always 22?
-            num_resources = self.read_header('l', 4)
+            num_resources = self.read_header('<l', 4)
             self.position += 1  # always 33?
             resources_end = self.position + 4 * num_resources
 
             # Interesting resources
-            food = self.read_header('f', 4)
-            wood = self.read_header('f', 4)
-            stone = self.read_header('f', 4)
-            gold = self.read_header('f', 4)
+            food = self.read_header('<f', 4)
+            wood = self.read_header('<f', 4)
+            stone = self.read_header('<f', 4)
+            gold = self.read_header('<f', 4)
+
 
             # headroom = (house capacity - population)
-            headroom = self.read_header('f', 4)
+            headroom = self.read_header('<f', 4)
             self.position += 4
             # Post-Imperial Age = Imperial Age here
-            starting_age = self.read_header('f', 4)
+            starting_age = self.read_header('<f', 4)
             self.position += 4 * 4
-            population = self.read_header('f', 4)
+            population = self.read_header('<f', 4)
             self.position += 25 * 4
-            civilian_pop = self.read_header('f', 4)
+            civilian_pop = self.read_header('<f', 4)
             self.position += 2 * 4
-            military_pop = self.read_header('f', 4)
+            military_pop = self.read_header('<f', 4)
 
             self.position = resources_end
             self.position += 1  # 1 byte
 
-            init_camera_x = self.read_header('f', 4)
-            init_camera_y = self.read_header('f', 4)
+            init_camera_x = self.read_header('<f', 4)
+            init_camera_y = self.read_header('<f', 4)
             if version.is_mgx:
                 self.position += 9
             else:
                 self.position += 5
 
-            civilization = ord(self.header[self.position])
+            civilization = self.header[self.position]
             self.position += 1
 
             if not civilization:
                 civilization = 1
             self.position += 3
 
-            player_color = ord(self.header[self.position])
+            player.color_id = int(self.header[self.position])
             self.position += 1
 
             player.civ_id = civilization
 
-            player.color_id = player_color
             player.initial_state.position = [round(init_camera_x), round(init_camera_y)]
             player.initial_state.food = round(food)
             player.initial_state.wood = round(wood)

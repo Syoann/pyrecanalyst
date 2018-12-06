@@ -28,7 +28,7 @@ class HeaderAnalyzerTest(unittest.TestCase):
             self.assertEqual(expected_count, analysis.num_players)
 
             for index, dic in enumerate(expected):
-                for key, value in dic.iteritems():
+                for key, value in dic.items():
                     if key == "is_cooping":
                         self.assertEqual(value, getattr(analysis.players[index], key)())
                     else:
@@ -47,7 +47,7 @@ class HeaderAnalyzerTest(unittest.TestCase):
             'history': 'RECANALYST:HISTORY\r\n\r\nDEMO HISTORY',
         }
 
-        for type, expected in message_types.iteritems():
+        for type, expected in message_types.items():
             self.assertEqual(expected, analysis.messages[type])
 
     def test_skipping_ai_info(self):

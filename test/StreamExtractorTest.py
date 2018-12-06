@@ -9,7 +9,7 @@ from StreamExtractor import StreamExtractor
 
 class StreamExtractorTest(unittest.TestCase):
     def load(self, path):
-        fp = open(os.path.join(os.path.dirname(__file__), path), 'r')
+        fp = open(os.path.join(os.path.dirname(__file__), path), 'rb')
         return StreamExtractor(fp)
 
     def test_stream_extractor(self):
@@ -17,6 +17,7 @@ class StreamExtractorTest(unittest.TestCase):
             extractor = self.load(f)
             self.assertIsNotNone(extractor.get_header())
             self.assertIsNotNone(extractor.get_body())
+            extractor.fp.close()
 
     def files_provider(self):
         return [

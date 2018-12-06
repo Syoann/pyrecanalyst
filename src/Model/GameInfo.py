@@ -1,4 +1,4 @@
-class GameInfo():
+class GameInfo:
     """GameInfo holds metadata about the analyzed game."""
 
     def __init__(self, rec):

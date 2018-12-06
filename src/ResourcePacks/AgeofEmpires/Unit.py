@@ -1,4 +1,4 @@
-class Unit(object):
+class Unit:
     """Age of Empires II unit IDs."""
     # Unit IDs that we might draw on maps
     # GAIA (needed for colours when drawing)

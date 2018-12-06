@@ -1,9 +1,7 @@
 #! /usr/bin/env python
-# coding: utf-8
 
 """
-A very barebones example. It outputs a map image to a PNG file and
-outputs the players in the game to the command line.
+Outputs game information in JSON format.
 """
 
 import os
@@ -22,16 +20,13 @@ parser = OptionParser()
 parser.add_option("-i", "--input", dest="filename", help="Input file")
 parser.add_option("-l", "--lang", dest="lang", help="Language code (en, fr, es, it, ...)")
 parser.add_option("-r", "--researches", dest="researches", help="Output file for the researches image")
-parser.add_option("-m", "--minimap", dest="minimap", default=None, help="Output file for the minimap")
+parser.add_option("-m", "--minimap", dest="minimap", help="Output file for the minimap")
 
 (options, args) = parser.parse_args()
 
 if not options.filename:
     parser.print_help()
     sys.exit()
-
-if not options.minimap:
-    options.minimap = "minimap.png"
 
 if not options.lang:
     options.lang = "en"
@@ -67,18 +62,26 @@ for player in rec.players():
     if options.researches:
         game["players"][player.name]["researches"] = {}
         for research in player.researches():
-            game["players"][player.name]["researches"][str(research.time())] = research.name()
+            game["players"][player.name]["researches"][str(research.time)] = research.name()
 
 # Export in JSON format
-print(json.dumps(game, ensure_ascii=False))
+print(json.dumps(game, ensure_ascii=False, indent=4))
 
 # Create researches image
 if options.researches:
+    image = rec.research_image()
+
     try:
-        image = rec.research_image()
-        image.resize((image.size[0]*2, image.size[1]*2)).save(options.researches)
-    except:
-        sys.stderr.write("Problem with researches chronology generation...\n")
+        image.resize((image.size[0], image.size[1])).save(options.researches)
+    except AttributeError as error:
+        sys.stderr.write("Could not generate the research chronology...\n")
+        raise(error)
 
 # Create output map
-rec.map_image().resize((1920, n_players*120+50)).save(options.minimap)
+if options.minimap:
+    image = rec.map_image()
+
+    try:
+        image.resize((350, 200)).save(options.minimap)
+    except AttributeError as error:
+        sys.stderr.write("Could not generate the minimap...\n")

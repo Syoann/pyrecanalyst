@@ -50,7 +50,7 @@ class VersionAnalyzer(Analyzer):
 
     def run(self):
         """Read recorded game version metadata."""
-        version_string = self.read_header_raw(8).rstrip(' \x00')
+        version_string = self.read_header_raw(8).rstrip(b' \x00').decode()
         sub_version = round(self.read_header('<f', 4), 2)
 
         version = self.get_version(version_string, sub_version)
@@ -117,7 +117,7 @@ class VersionAnalyzer(Analyzer):
             pass
         elif version == 'VER 9.B' or version == 'VER 9.C' or version == 'VER 9.D':
             return Version.VERSION_USERPATCH14
-        elif version == 'VER 9.E':
+        elif version == "VER 9.F":
             return Version.VERSION_USERPATCH15
 
         return version

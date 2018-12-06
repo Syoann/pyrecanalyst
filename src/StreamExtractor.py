@@ -1,14 +1,15 @@
-# coding: utf-8
-import base64
 import struct
 import zlib
 
-class StreamExtractor(object):
+class StreamExtractor:
     """
     Extracts header and body parts from recorded game files.
     Position of the first header byte in the file.
     """
-    def __init__(self, fp, options={}):
+    def __init__(self, fp, options=None):
+        if options is None:
+            options = {}
+
         self.header_start = 0
         self.header_len = 0
         self.header_contents = None
@@ -22,7 +23,7 @@ class StreamExtractor(object):
         Determine the header length if the Header Length field was not set in the
         file.
         """
-        separator = struct.pack('cccc', '\xf4', '\x01', '\x00', '\x00')
+        separator = struct.pack('<cccc', b'\xf4', b'\x01', b'\x00', b'\x00')
         initial_base = self.fp.tell()
         base = initial_base
         buffer = self.fp.read(8192)
@@ -47,14 +48,14 @@ class StreamExtractor(object):
         if not raw_read or len(raw_read) < 4:
             raise Exception('Unable to read the header length')
 
-        self.header_len = struct.unpack('L', raw_read)[0]
+        self.header_len = struct.unpack('<L', raw_read)[0]
 
         if not self.header_len:
             self.manually_determine_header_length()
             if not self.header_len:
                 raise Exception('Header length is zero')
         raw_read = self.fp.read(4)
-        next_pos = struct.unpack('L', raw_read)[0]
+        next_pos = struct.unpack('<L', raw_read)[0]
         has_next_pos = next_pos == 0 or next_pos < self.get_file_size()
         self.header_start = 4
         if has_next_pos:
@@ -69,7 +70,7 @@ class StreamExtractor(object):
             self.determine_header_length()
         self.fp.seek(self.header_start, 0)
         read = 0
-        bindata = ''
+        bindata = b''
         buff = self.fp.read(self.header_len - read)
         while read < self.header_len and buff:
             read += len(buff)
@@ -93,5 +94,4 @@ class StreamExtractor(object):
         self.fp.seek(self.header_start + self.header_len, 0)
         self.body_contents = ''
         self.body_contents = self.fp.read()
-        self.fp.close()
         return self.body_contents

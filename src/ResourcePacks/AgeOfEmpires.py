@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from ResourcePacks.ResourcePack import ResourcePack
 from ResourcePacks.AgeofEmpires.Map import Map
 from ResourcePacks.AgeofEmpires.Unit import Unit

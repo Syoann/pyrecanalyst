@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from Processors.MapName import MapName
 
 
