@@ -283,7 +283,7 @@ class BodyAnalyzer(Analyzer):
         if length <= 0:
             return
 
-        chat = self.read_body_raw(length).rstrip(b'\x00').decode('latin-1')
+        chat = self.read_body_raw(length).rstrip(b'\x00').decode('utf-8')
 
         # Chat messages are stored as "@#%dPlayerName: Message", where %d is a
         # digit from 1 to 8 indicating player's index (or colour).

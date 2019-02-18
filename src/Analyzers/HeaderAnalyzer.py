@@ -71,7 +71,6 @@ class HeaderAnalyzer(Analyzer):
             scenario_header_pos -= 4
 
         if version.is_aoe2_record:
-            print("ok")
             aoe2record_header = self.read(Aoe2RecordHeaderAnalyzer)
 
         include_ai = self.read_header('<L', 4)
@@ -109,12 +108,22 @@ class HeaderAnalyzer(Analyzer):
         analysis.num_players = num_players
 
         self.position += 58
+        old_pos = self.position
 
-        if version.is_aoe2_record:
-            self.position += 1
+#        if version.is_aoe2_record:
+#            self.position += 1
 
-        map_data = self.read(MapDataAnalyzer)
-        analysis.map_size = map_data["map_size"]
+        for i in range(1, 2):
+            try:
+                self.position = old_pos + i
+                map_data = self.read(MapDataAnalyzer)
+                analysis.map_size = map_data["map_size"]
+
+                if analysis.map_size[0] > 5 and analysis.map_size[0] == analysis.map_size[1]:
+                    print(i)
+                    print(analysis.map_size)
+            except:
+                pass
 
         # int. Value is 10060 in AoK recorded games, 40600 in AoC and on.
         self.position += 4
@@ -270,7 +279,7 @@ class HeaderAnalyzer(Analyzer):
             if length <= 0:
                 continue
 
-            chat = self.read_header_raw(length).decode('latin-1')
+            chat = self.read_header_raw(length).decode('utf-8')
 
             # pre-game chat messages are stored as "@#%d_player_name: Message",
             # where %d is a digit from 1 to 8 indicating player's index (or

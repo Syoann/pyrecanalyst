@@ -59,7 +59,7 @@ class PlayerMetaAnalyzer(Analyzer):
         length = self.read_header('<L', 4)
 
         if length:
-            player.name = self.read_header_raw(length).decode('latin-1')
+            player.name = self.read_header_raw(length).decode('utf-8')
         else:
             player.name = ''
 
