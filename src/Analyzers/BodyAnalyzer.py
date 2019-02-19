@@ -256,7 +256,7 @@ class BodyAnalyzer(Analyzer):
 
         ordered_buildings = []
         if self.buildings:
-            obuildings = [(k, self.buildings[k]) for k in sorted(self.buildings.keys())]
+            ordered_buildings = [(k, self.buildings[k]) for k in sorted(self.buildings.keys())]
 
         analysis = Analysis()
         analysis.duration = self.current_time
@@ -270,16 +270,17 @@ class BodyAnalyzer(Analyzer):
 
     # Process the game start data. Not much here right now.
     def process_game_start(self):
+        self.position += 20
+
         if self.version.is_mgl:
-            self.position += 28
+            self.position += 8
             ver = int(self.body[self.position])
             self.position += 4
-        else:
-            self.position += 20
 
     # Read a chat message.
     def process_chat_message(self):
         length = self.read_body('<l', 4)
+
         if length <= 0:
             return
 
@@ -287,10 +288,12 @@ class BodyAnalyzer(Analyzer):
 
         # Chat messages are stored as "@#%dPlayerName: Message", where %d is a
         # digit from 1 to 8 indicating player's index (or colour).
-        if chat.startswith('@#') and chat[2] >= '1' and chat[2] <= '8':
+        if chat.startswith('@#') and chat[2].isdigit():
             chat = chat.rstrip()
             player_number = int(chat[2])
-            if chat[3:5] == '--' and chat[-2:] == '--':
+            message = chat[3:]
+
+            if message.startswith('--') and message.endswith('--'):
                 # Skip messages like "--Warning: You are under attack... --"
                 return
             elif player_number in self.players_by_number:
@@ -301,8 +304,4 @@ class BodyAnalyzer(Analyzer):
                 # TODO that auto-create behaviour is probably not desirable...
                 player = None
 
-            self.chat_messages.append(ChatMessage.create(
-                self.current_time,
-                player,
-                chat[3:]))
-
+            self.chat_messages.append(ChatMessage.create(self.current_time, player, message))
