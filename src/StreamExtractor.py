@@ -1,6 +1,7 @@
 import struct
 import zlib
 
+
 class StreamExtractor:
     """
     Extracts header and body parts from recorded game files.
@@ -20,8 +21,8 @@ class StreamExtractor:
 
     def manually_determine_header_length(self):
         """
-        Determine the header length if the Header Length field was not set in the
-        file.
+        Determine the header length if the Header Length field was not set in
+        the file.
         """
         separator = struct.pack('<cccc', b'\xf4', b'\x01', b'\x00', b'\x00')
         initial_base = self.fp.tell()
@@ -66,8 +67,10 @@ class StreamExtractor:
         """Read or return the Recorded Game file's header block."""
         if self.header_contents:
             return self.header_contents
+
         if not self.header_len:
             self.determine_header_length()
+
         self.fp.seek(self.header_start, 0)
         read = 0
         bindata = b''
@@ -77,21 +80,19 @@ class StreamExtractor:
             bindata += buff
             buff = self.fp.read(self.header_len - read)
 
-        del buff
-        self.header_contents = zlib.decompress(bindata, -15)
-        del bindata
-        if not self.header_contents:
-            raise Exception('Cannot decompress header section')
+        try:
+            self.header_contents = zlib.decompress(bindata, -15)
+        except zlib.error:
+            raise Exception('Cannot decompress header section. Please check your input file.')
         return self.header_contents
 
     def get_body(self):
         """Read or return the Recorded Game file's body."""
         if self.body_contents:
             return self.body_contents
+
         if not self.header_len:
             self.determine_header_length()
 
         self.fp.seek(self.header_start + self.header_len, 0)
-        self.body_contents = ''
-        self.body_contents = self.fp.read()
-        return self.body_contents
+        return self.fp.read()
