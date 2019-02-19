@@ -32,7 +32,7 @@ class HeaderAnalyzer(Analyzer):
     """Analyzer for most things in a recorded game file header."""
 
     def __init__(self, *args):
-         self.args = args
+        self.args = args
 
     def run(self):
         """Run the analysis."""
