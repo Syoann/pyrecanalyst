@@ -109,7 +109,6 @@ class HeaderAnalyzer(Analyzer):
         analysis.num_players = num_players
 
         self.position += 58
-        old_pos = self.position
 
         if version.is_aoe2_record:
             self.position += 1
