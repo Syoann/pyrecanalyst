@@ -7,8 +7,9 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
     def run(self):
         data = {}
 
-        version = self.read_header('f', 4)  # float 1000, 1004, 1005...
+        version = self.read_header('f', 4)  # float 1000, 1004, 1005, 1006...
         self.position += 4  # int 1000
+
 
         # Unknown, AoK HD.exe string "mrefDlcOptions" may be related.
         self.position += 4
@@ -25,7 +26,7 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
 
         # Unknown value (added in HD 5.7)
         if version >= 1006.0:
-            self.read_header('<l', 4)
+            x = self.read_header('<l', 4)
 
         data['map_id'] = self.read_header('<l', 4)
         data['reveal_map'] = self.read_header('<l', 4)
@@ -49,6 +50,7 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
         data['treaty_length'] = self.read_header('<l', 4)
         data['pop_limit'] = self.read_header('<l', 4)
         data['num_players'] = self.read_header('<l', 4)
+
 
         num_players = data['num_players']
 
@@ -74,7 +76,11 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
         # Unknowns.
         self.position += 8
 
-        if version >= 1004.0:
+
+        if version >= 1006.0:
+            # Version 12.50, patch 5.7, 5.8.
+            players = self.read_players1006(version, num_players)
+        elif version >= 1004.0:
             # Version 12.49, 12.50, maybe others.
             players = self.read_players1004(version, num_players)
         else:
@@ -129,58 +135,85 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
         # TODO decide on a format to output self stuff.
         return data
 
+
+    def read_players1006(self, version, num_players):
+        players = []
+        for i in range(0, 8):
+            if i >= num_players:
+                # Skip empty players.
+                self.position += 61
+                continue
+
+            self.position += 2
+
+            # Unknown value
+            unknown = self.header[self.position]
+            self.position += 1
+
+            # Player's data
+            player = {}
+
+            # Hash of data files.
+            player['dat_crc'] = self.read_header('<l', 4)
+            player['mp_version'] = self.header[self.position]
+            self.position += 1
+            player['team_index'] = self.read_header('<l', 4)
+            player['civ_id'] = self.read_header('<l', 4)
+            player['ai_base_name'] = self.read_aoe2_record_string()
+            player['ai_civ_name_index'] = int(self.header[self.position])
+            self.position += 1
+            player['unknown_name'] = self.read_aoe2_record_string()
+
+            player['player_name'] = self.read_aoe2_record_string()
+            player['humanity'] = self.read_header('<l', 4)
+            player['steam_id'] = self.read_header('<Q', 8)
+            player['player_index'] = self.read_header('<l', 4)
+            player['unknown'] = self.read_header('<l', 4)  # Seems to be constant among all players so far...
+            player['player_elo'] = self.read_header('<l', 4)  # Added in HD 5.7
+            player['scenario_index'] = self.read_header('<l', 4)
+            player['unknown_value'] = self.read_header('<l', 4)  # TODO: Determine what it stands for
+
+            players.append(player)
+
+        return players
+
+
     def read_players1004(self, version, num_players):
-        players = {}
+        players = []
         for i in range(0, 8):
             if i >= num_players:
                 # Skip empty players.
                 self.position += 48
-                if version >= 1006.0:
-                    self.position += 5
-                elif version >= 1005.0:
+                if version >= 1005.0:
                     self.position += 4
                 continue
 
-            if version >= 1006.0:
-                self.position += 1
-
             self.position += 2
 
+            # Player's data
+            player = {}
+
             # Hash of data files.
-            dat_crc = self.read_header('<l', 4)
-            mp_version = self.header[self.position]
+            player['dat_crc'] = self.read_header('<l', 4)
+            player['mp_version'] = self.header[self.position]
             self.position += 1
-            team_index = self.read_header('<l', 4)
-            civ_id = self.read_header('<l', 4)
-            ai_base_name = self.read_aoe2_record_string()
-            ai_civ_name_index = int(self.header[self.position])
+            player['team_index'] = self.read_header('<l', 4)
+            player['civ_id'] = self.read_header('<l', 4)
+            player['ai_base_name'] = self.read_aoe2_record_string()
+            player['ai_civ_name_index'] = int(self.header[self.position])
             self.position += 1
-            unknown_name = None
+            player['unknown_name'] = None
             if version >= 1005.0:
-                unknown_name = self.read_aoe2_record_string()
+                player['unknown_name'] = self.read_aoe2_record_string()
 
-            player_name = self.read_aoe2_record_string()
-            humanity = self.read_header('<l', 4)
-            steam_id = self.read_header('<Q', 8)
-            player_index = self.read_header('<l', 4)
-            unknown = self.read_header('<l', 4)  # Seems to be constant among all players so far...
-            scenario_index = self.read_header('<l', 4)
+            player['player_name'] = self.read_aoe2_record_string()
+            player['humanity'] = self.read_header('<l', 4)
+            player['steam_id'] = self.read_header('<Q', 8)
+            player['player_index'] = self.read_header('<l', 4)
+            player['unknown'] = self.read_header('<l', 4)  # Seems to be constant among all players so far...
+            player['scenario_index'] = self.read_header('<l', 4)
 
-            players.update({
-                'dat_crc': dat_crc,
-                'mp_version': mp_version,
-                'team_index': team_index,
-                'civ_id': civ_id,
-                'ai_base_name': ai_base_name,
-                'ai_civ_name_index': ai_civ_name_index,
-                'unknown_name': unknown_name,
-                'player_name': player_name,
-                'humanity': humanity,
-                'steam_id': steam_id,
-                'player_index': player_index,
-                'unknown': unknown,
-                'scenario_index': scenario_index,
-            })
+            players.append(player)
 
         return players
 
