@@ -1,4 +1,5 @@
 import math
+import re
 import struct
 
 from Analyzers.Analyzer import Analyzer
@@ -288,7 +289,7 @@ class BodyAnalyzer(Analyzer):
 
         # Chat messages are stored as "@#%dPlayerName: Message", where %d is a
         # digit from 1 to 8 indicating player's index (or colour).
-        if chat.startswith('@#') and chat[2].isdigit():
+        if re.match(r'@#[1-8]', chat):
             chat = chat.rstrip()
             player_number = int(chat[2])
             message = chat[3:]
