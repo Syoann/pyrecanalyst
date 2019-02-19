@@ -57,6 +57,7 @@ class HeaderAnalyzer(Analyzer):
         self.version = self.read(VersionAnalyzer)
         version = self.version
 
+
         trigger_info_pos = self.header.rindex(constant2, self.position) + len(constant2)
         game_settings_pos = self.header[0:trigger_info_pos].rindex(separator) + len(separator)
         scenario_separator = scenario_constant
@@ -110,20 +111,11 @@ class HeaderAnalyzer(Analyzer):
         self.position += 58
         old_pos = self.position
 
-#        if version.is_aoe2_record:
-#            self.position += 1
+        if version.is_aoe2_record:
+            self.position += 1
 
-        for i in range(1, 2):
-            try:
-                self.position = old_pos + i
-                map_data = self.read(MapDataAnalyzer)
-                analysis.map_size = map_data["map_size"]
-
-                if analysis.map_size[0] > 5 and analysis.map_size[0] == analysis.map_size[1]:
-                    print(i)
-                    print(analysis.map_size)
-            except:
-                pass
+        map_data = self.read(MapDataAnalyzer)
+        analysis.map_size = map_data["map_size"]
 
         # int. Value is 10060 in AoK recorded games, 40600 in AoC and on.
         self.position += 4
@@ -179,7 +171,7 @@ class HeaderAnalyzer(Analyzer):
         # Other player analyzers will fall back to self data in those cases.
         if version.is_aoe2_record and 'players' in aoe2record_header:
             for i, player in enumerate(players):
-                for key, value in aoe2record_header['players'].items():
+                for key, value in aoe2record_header['players'][i].items():
                     setattr(player, key, value)
 
         analysis.players = players

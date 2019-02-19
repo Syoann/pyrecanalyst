@@ -28,9 +28,7 @@ class MapImage(object):
         header = self.rec.header()
         map_data = header.map_data
         map_size = len(map_data)
-        image = Image.new('RGBA', (map_size, map_size), (255, 255, 255, 0))
-
-        print(map_size)
+        image = Image.new('RGBA', (map_size, map_size), (255, 255, 255, 1))
 
         draw = ImageDraw.Draw(image)
         pixels = image.load()
