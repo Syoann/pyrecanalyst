@@ -8,25 +8,24 @@ outputs the players in the game to the command line.
 
 import os
 import sys
-from optparse import OptionParser
+import argparse
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from RecordedGame import RecordedGame
 
 
-parser = OptionParser()
-parser.add_option("-i", "--input", dest="filename", help="Input file")
-parser.add_option("-o", "--output", dest="output", default=None, help="Output file")
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", dest="filename", help="Input file", required=True)
+parser.add_argument("-o", "--output", dest="output", default=None, help="Output file")
+args = parser.parse_args()
 
-(options, args) = parser.parse_args()
-
-if not options.output:
-    options.output = options.filename + ".png"
+if not args.output:
+    args.output = os.path.basename(args.filename) + ".png"
 
 
 # Read a recorded game from a file path.
-rec = RecordedGame(options.filename)
+rec = RecordedGame(args.filename)
 
 version = rec.version()
 
@@ -44,4 +43,5 @@ for player in rec.players():
         symbol = '>'
     print(' ' + symbol + ' ' + str(player.name) + ' (' + str(player.civ_name()) + ')')
 
-rec.map_image().resize((1024, 512)).save(options.output)
+rec.map_image().resize((1024, 1024)).save(args.output)
+print("Minimap saved under '{}'".format(args.output))

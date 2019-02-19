@@ -4,10 +4,10 @@
 Outputs game information in JSON format.
 """
 
+import argparse
 import os
 import sys
 import json
-from optparse import OptionParser
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
@@ -16,23 +16,19 @@ from BasicTranslator import BasicTranslator
 from Utils import Utils
 
 
-parser = OptionParser()
-parser.add_option("-i", "--input", dest="filename", help="Input file")
-parser.add_option("-l", "--lang", dest="lang", help="Language code (en, fr, es, it, ...)")
-parser.add_option("-r", "--researches", dest="researches", help="Output file for the researches image")
-parser.add_option("-m", "--minimap", dest="minimap", help="Output file for the minimap")
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--input', dest="filename", help="Input file", required=True)
+parser.add_argument('-l', '--lang', dest="language", help="Language code (en, fr, es, it, ...)")
+parser.add_argument('-r', '--researches', dest="researches", help="Output file for the researches image")
+parser.add_argument('-m', '--minimap', dest="minimap", help="Output file for the minimap")
 
-(options, args) = parser.parse_args()
+args = parser.parse_args()
 
-if not options.filename:
-    parser.print_help()
-    sys.exit()
-
-if not options.lang:
-    options.lang = "en"
+if not args.language:
+    args.language = 'en'
 
 # Read a recorded game from a file path.
-rec = RecordedGame(options.filename, {'translator': BasicTranslator(options.lang)})
+rec = RecordedGame(args.filename, {'translator': BasicTranslator(args.language)})
 
 game = {}
 
@@ -59,7 +55,7 @@ for player in rec.players():
     game["players"][player.name]["color"] = str(player.color())
     game["players"][player.name]["resign_time"] = player.resign_time
 
-    if options.researches:
+    if args.researches:
         game["players"][player.name]["researches"] = {}
         for research in player.researches():
             game["players"][player.name]["researches"][str(research.time)] = research.name()
@@ -68,20 +64,20 @@ for player in rec.players():
 print(json.dumps(game, ensure_ascii=False, indent=4))
 
 # Create researches image
-if options.researches:
+if args.researches:
     image = rec.research_image()
 
     try:
-        image.resize((image.size[0], image.size[1])).save(options.researches)
+        image.resize((image.size[0], image.size[1])).save(args.researches)
     except AttributeError as error:
         sys.stderr.write("Could not generate the research chronology...\n")
         raise(error)
 
 # Create output map
-if options.minimap:
+if args.minimap:
     image = rec.map_image()
 
     try:
-        image.resize((350, 200)).save(options.minimap)
+        image.resize((350, 200)).save(args.minimap)
     except AttributeError as error:
         sys.stderr.write("Could not generate the minimap...\n")

@@ -4,14 +4,9 @@
 Outputs a bunch of information about the recorded game, in a specified
 locale. By default, this script uses French, but a command-line parameter
 can be passed to use a different language.
-
-Usage:
-   php examples/simple-localized.php # Default language (French).
-   php examples/simple-localized.php br # Use Brazilian Portuguese
-   php examples/simple-localized.php fake # Nonexistent language, falls back
-                                          # to RecAnalyst's default (English)
 """
 
+import argparse
 import os
 import sys
 
@@ -20,17 +15,19 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 from RecordedGame import RecordedGame
 from BasicTranslator import BasicTranslator
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--input', dest='filename', help='Input file', required=True)
+parser.add_argument('-l', '--lang', dest='language', help='Language')
+args = parser.parse_args()
 
-filename = os.path.dirname(__file__) + '/../test/recs/versions/up1.4.mgz'
+# Deafult language
+if args.locale is None:
+    args.locale = 'fr'
 
-# Read a command-line argument specifying the language to use.
-locale = 'fr'
-if len(sys.argv) > 1:
-    locale = sys.argv[1]
 
 # Read a recorded game from a file path.
-rec = RecordedGame(filename, {
-    'translator': BasicTranslator(locale)
+rec = RecordedGame(args.filename, {
+    'translator': BasicTranslator(args.language)
 })
 
 # Display some metadata.

@@ -14,13 +14,15 @@ them on the command line.
 
 A small example that displays some information about the game settings of a
 recorded game, in a language of user choice.
-Not working at the moment.
-
-## [Analyze](./analyze.py)
-
-Advanced analysis of the game, used to populate a database. (JSON ouput)
 
 ```bash
-python examples/simple-localized.py # Default language (French, for this script).
-python examples/simple-localized.py br # Use Brazilian Portuguese
+python3 examples/simple-localized.py --input game.aoe2record # Default language (French in this script).
+python3 examples/simple-localized.py --input game.aoe2record --lang br # Use Brazilian Portuguese
+```
+## [Analyze](./analyze.py)
+
+Advanced analysis of a game; can be used to populate a database (JSON ouput).
+
+```bash
+python3 examples/analyze.py --input game.aoe2record --lang fr --minimap minimap.out.png --researches researches.out.png
 ```
