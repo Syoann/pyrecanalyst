@@ -25,7 +25,7 @@ class ChatMessage():
         self.group = group
 
     def __str__(self):
-        return ">{}:{}".format(self.player.name, self.msg)
+        return f">{self.player_name}:{self.msg}"
 
     @staticmethod
     def create(time, player, chat):

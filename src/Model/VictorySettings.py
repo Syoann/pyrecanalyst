@@ -25,13 +25,13 @@ class VictorySettings:
         if self.mode not in VictorySettings.VICTORY_CONDITIONS:
             return ''
 
-        result = VictorySettings.VICTORY_CONDITIONS[self.mode]
+        condition = VictorySettings.VICTORY_CONDITIONS[self.mode]
 
         if self.mode == VictorySettings.TIMELIMIT:
             if self.time_limit:
-                return "{} ({})".format(result, self.time_limit)
+                return f"{condition} ({self.time_limit})"
         elif self.mode == VictorySettings.SCORELIMIT:
             if (self.score_limit):
-                return "{} ({})".format(result, self.score_limit)
+                return f"{condition} ({self.score_limit})"
 
         return result
