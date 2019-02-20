@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), os.pardir, "src"))
 
 from RecordedGame import RecordedGame
 from Model.Tribute import Tribute
+from Model.Resource import Resource
 from Analyzers.BodyAnalyzer import BodyAnalyzer
 
 
@@ -43,7 +44,7 @@ class BodyAnalyzerTest(unittest.TestCase):
         tributes = rec.run_analyzer(BodyAnalyzer()).tributes
 
         self.assertEqual(10000, tributes[0].amount)
-        self.assertEqual(Tribute.WOOD, tributes[0].resource_id)
+        self.assertEqual(Resource.WOOD, tributes[0].resource)
         self.assertEqual('Ruga the Hun (Original AI)', tributes[0].player_from.name)
         self.assertEqual('Mu Gui-ying (Original AI)', tributes[0].player_to.name)
 

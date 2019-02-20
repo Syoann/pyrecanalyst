@@ -6,6 +6,7 @@ from Analyzers.Analyzer import Analyzer
 from Analyzers.VersionAnalyzer import VersionAnalyzer
 from Analyzers.PlayerMetaAnalyzer import PlayerMetaAnalyzer
 from Analyzers.PostgameDataAnalyzer import PostgameDataAnalyzer
+from Model.Resource import Resource
 from Model.Tribute import Tribute
 from Model.ChatMessage import ChatMessage
 from ResourcePacks.AgeofEmpires.Civilization import Civilization
@@ -239,7 +240,7 @@ class BodyAnalyzer(Analyzer):
                         tribute.time = self.current_time
                         tribute.player_from = player_from
                         tribute.player_to = player_to
-                        tribute.resource_id = resource_id
+                        tribute.resource = Resource(resource_id)
                         tribute.amount = math.floor(amount)
                         tribute.fee = market_fee
                         self.tributes.append(tribute)

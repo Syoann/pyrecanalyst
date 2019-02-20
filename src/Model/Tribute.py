@@ -1,11 +1,7 @@
+from .Resource import Resource
+
 class Tribute:
     """Represents a resource tribute."""
-
-    FOOD = 0
-    WOOD = 1
-    STONE = 2
-    GOLD = 3
-
     def __init__(self):
         # Time this tribute was sent
         self.time = 0
@@ -20,7 +16,7 @@ class Tribute:
         self.player_to = None
 
         # ID of the resource sent in this tribute
-        self.resource_id = Tribute.FOOD
+        self.resource = Resource.FOOD
 
         # Market fee
         self.fee = 0.0
