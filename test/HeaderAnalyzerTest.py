@@ -37,6 +37,7 @@ class HeaderAnalyzerTest(unittest.TestCase):
     def test_scenario_messages(self):
         rec = self.load('recs/scenario/scenario-with-messages.mgz')
         analysis = rec.run_analyzer(HeaderAnalyzer())
+        analysis.messages['instructions'] = analysis.messages['instructions'].decode()
         message_types = {
             # Identifiers embedded in the test game.
             'instructions': 'RECANALYST:INSTRUCTIONS\r\n\r\nDEMO SCENARIO INSTRUCTIONS',
@@ -80,7 +81,7 @@ class HeaderAnalyzerTest(unittest.TestCase):
         self.assertEqual(1, getattr(analysis.game_settings, 'lock_diplomacy'))
         self.assertEqual(GameSettings.LEVEL_EASIEST, getattr(analysis.game_settings, 'difficulty_level'))
         self.assertEqual(28, getattr(analysis.game_settings, 'map_id'))
-        self.assertTrue('Conquest Game' in analysis.messages["instructions"])
+        self.assertTrue('Conquest Game' in analysis.messages["instructions"].decode())
 
     def test_aoe2_record_victory_settings(self):
         rec = self.load('recs/versions/HD Tourney r1 robo_boro vs Dutch Class g1.aoe2record')

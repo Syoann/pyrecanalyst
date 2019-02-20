@@ -106,8 +106,11 @@ class GameSettings():
         """Returns true if game type is scenario, false otherwise."""
         return self.game_type == GameSettings.TYPE_SCENARIO
 
-    def map_name(self, options={}):
+    def map_name(self, options=None):
         """Get the map name."""
+        if options is None:
+            options = {}
+
         extract_rms_name = True
         if 'extract_rms_name' in options:
             extract_rms_name = options['extract_rms_name']

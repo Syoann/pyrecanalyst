@@ -19,22 +19,17 @@ class MapName:
         # Code page information for zh, jp and ko was taken from:
         # https:#msdn.microsoft.com/en-us/library/cc194886.aspx
         self.map_type_regexes = {
-            'br': 'Tipo de Mapa: (.*)',
-            'de': 'Kartentyp: (.*)',
-            'en': 'Map Type: (.*)',
-            'es': 'Tipo de mapa: (.*)',
-            'fr': 'Type de carte : (.*)',
-            'it': 'Tipo di mappa: (.*)',
-            'jp': 'マップの種類: (.*)',
-            'jp_utf8': 'マップの種類: (.*)',
-            'ko': '지도 종류: (.*)',
-            'ko_utf8': '지도 종류: (.*)',
-            'nl': 'Kaarttype: (.*)',
-            'nl_utf8': 'Kaarttype: (.*)',
-            'ru': 'Тип карты: (.*)',
-            'ru_utf8': 'Тип карты: (.*)',
-            'zh': '地图类型: (.*)',
-            'zh_utf8': '地图类型: (.*)',
+            'br': {'content': 'Tipo de Mapa: (.*)', 'encoding': 'utf-8'},
+            'de': {'content': 'Kartentyp: (.*)', 'encoding': 'utf-8'},
+            'en': {'content': 'Map Type: (.*)', 'encoding': 'utf-8'},
+            'es': {'content': 'Tipo de mapa: (.*)', 'encoding': 'utf-8'},
+            'fr': {'content': 'Type de carte : (.*)', 'encoding': 'utf-8'},
+            'it': {'content': 'Tipo di mappa: (.*)', 'encoding': 'utf-8'},
+            'jp': {'content': 'マップの種類: (.*)', 'encoding': 'cp932'},
+            'ko': {'content': '지도 종류: (.*)', 'encoding': 'cp949'},
+            'nl': {'content': 'Kaarttype: (.*)', 'encoding': 'utf-8'},
+            'ru': {'content': 'Тип карты: (.*)', 'encoding': 'windows-1251'},
+            'zh': {'content': '地图类型: (.*)', 'encoding': 'cp936'},
         }
 
     def run(self):
@@ -43,12 +38,15 @@ class MapName:
         messages = header.messages
         instructions = messages["instructions"]
 
-        lines = instructions.split('\n')
+        lines = instructions.split(b'\n')
 
         for line in lines:
             # We don't know what language the game was played in, so we try
             # every language we know.
-            for lang, rx in self.map_type_regexes.items():
-                matches = re.match(rx, line)
-                if matches:
-                    return matches.group(1)
+            for lang, attr in self.map_type_regexes.items():
+                try:
+                    matches = re.match(attr['content'], line.decode(attr['encoding']))
+                    if matches:
+                        return matches.group(1)
+                except:
+                    pass

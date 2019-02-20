@@ -1,3 +1,4 @@
+import re
 import struct
 
 from Model.Team import Team
@@ -112,6 +113,7 @@ class HeaderAnalyzer(Analyzer):
 
         if version.is_aoe2_record:
             self.position += 1
+
 
         map_data = self.read(MapDataAnalyzer)
         analysis.map_size = map_data["map_size"]
@@ -270,12 +272,12 @@ class HeaderAnalyzer(Analyzer):
             if length <= 0:
                 continue
 
-            chat = self.read_header_raw(length).decode('utf-8')
+            chat = self.read_header_raw(length).decode()
 
             # pre-game chat messages are stored as "@#%d_player_name: Message",
             # where %d is a digit from 1 to 8 indicating player's index (or
             # colour)
-            if chat[0] == '@' and chat[1] == '#' and chat[2] >= '1' and chat[2] <= '8':
+            if re.match(r'@#[1-8]', chat):
                 chat = chat.rstrip(' \x00')  # throw None-termination character
                 if int(chat[2]) in players_by_number:
                     player = players_by_number[int(chat[2])]
@@ -448,7 +450,7 @@ class HeaderAnalyzer(Analyzer):
     def read_messages(self):
         """Read messages."""
         length = self.read_header('<H', 2)
-        instructions = self.read_header_raw(length).rstrip(b'\x00').decode(errors='ignore') # FIXME
+        instructions = self.read_header_raw(length).rstrip(b'\x00')
         length = self.read_header('<H', 2)
         hints = self.read_header_raw(length).rstrip(b'\x00').decode()
         length = self.read_header('<H', 2)
