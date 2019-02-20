@@ -48,5 +48,5 @@ class MapName:
                     matches = re.match(attr['content'], line.decode(attr['encoding']))
                     if matches:
                         return matches.group(1)
-                except:
+                except UnicodeDecodeError:
                     pass
