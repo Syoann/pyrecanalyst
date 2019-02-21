@@ -86,7 +86,6 @@ class HeaderAnalyzer(Analyzer):
         else:
             game_speed = self.read_header('<l', 4)
 
-
         # These bytes contain the game speed again several times over, as ints
         # and as floats (On normal speed: 150, 1.5 and 0.15). Why?!
         self.position += 37
@@ -107,16 +106,25 @@ class HeaderAnalyzer(Analyzer):
             game_mode = self.read_header('<H', 2)
 
 
+        if version.sub_version >= 12.50:
+            self.position += 12
+
         analysis.num_players = num_players
 
-        self.position += 58
+        if version.is_aoe2_record and version.sub_version >= 12.49:
+            self.position += 46
+        else:
+            self.position += 58
 
         if version.is_aoe2_record:
             self.position += 1
 
+        if version.version_string == "VER 9.E" and version.sub_version == 11.76:
+            self.position += 2
 
         map_data = self.read(MapDataAnalyzer)
         analysis.map_size = map_data["map_size"]
+
 
         # int. Value is 10060 in AoK recorded games, 40600 in AoC and on.
         self.position += 4
