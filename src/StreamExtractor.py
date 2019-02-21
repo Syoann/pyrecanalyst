@@ -81,7 +81,7 @@ class StreamExtractor:
             buff = self.fp.read(self.header_len - read)
 
         try:
-            self.header_contents = zlib.decompress(bindata, -15)
+            self.header_contents = zlib.decompress(bindata, -zlib.MAX_WBITS)
         except zlib.error:
             raise Exception('Cannot decompress header section. Please check your input file.')
         return self.header_contents
