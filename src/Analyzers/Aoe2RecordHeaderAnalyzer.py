@@ -147,7 +147,7 @@ class Aoe2RecordHeaderAnalyzer(Analyzer):
             self.position += 2
 
             # Unknown value
-            unknown = self.header[self.position]
+            unknown = self.header[self.position]  # Added in HD 5.7
             self.position += 1
 
             # Player's data

@@ -48,6 +48,7 @@ class RecordedGame:
         self.streams = StreamExtractor(self.fp, options)
 
     def __del__(self):
+        """Close the file at object deletion"""
         if self.fp:
             self.fp.close()
 

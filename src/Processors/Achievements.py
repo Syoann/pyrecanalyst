@@ -1,5 +1,8 @@
 class Achievements(object):
-    def __init__(self, rec, options={}):
+    def __init__(self, rec, options=None):
+        if options is None:
+            options = {}
+
         # Recorded game file to use.
         self.rec = rec
 

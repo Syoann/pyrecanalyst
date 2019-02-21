@@ -41,7 +41,10 @@ class GameSettings():
     MODE_SINGLEPLAYER = 0
     MODE_MULTIPLAYER = 1
 
-    def __init__(self, rec, attrs={}):
+    def __init__(self, rec, attrs=None):
+        if attrs is None:
+            attrs = {}
+
         # Recorded game instance.
         self.rec = rec
 
@@ -79,7 +82,7 @@ class GameSettings():
         return self.rec.trans('map_styles', map_style)
 
     def difficulty_name(self):
-        """eturns difficulty level string."""
+        """Returns difficulty level string."""
         return self.rec.trans('difficulties', self.difficulty_level)
 
     def game_speed_name(self):

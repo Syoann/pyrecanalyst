@@ -38,10 +38,10 @@ class PlayerInfoBlockAnalyzer(Analyzer):
         """Run the analysis."""
         self.version = self.get(VersionAnalyzer)
 
-        # try:
+#        try:
         return self.analyze_extended()
-        # except Exception as e:
-        #     return self.analyze_simple()
+#        except:
+#            return self.analyze_simple()
 
     def analyze_extended(self):
         """Analyze an extended player info block, including unit data."""
