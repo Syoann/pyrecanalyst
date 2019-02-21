@@ -29,10 +29,10 @@ rec = RecordedGame(args.filename)
 
 version = rec.version()
 
-print('Version: ' + version.version_string + ' (' + str(version.sub_version) + ')')
+print(f"Version: {version.version_string} ({version.sub_version})")
 
 # Display map name
-print('Map Name: ' + str(rec.game_settings().map_name()))
+print(f"Map Name: {rec.game_settings().map_name()}")
 
 # Display players and their civilizations.
 print('Players: ')
@@ -41,7 +41,7 @@ for player in rec.players():
     symbol = '*'
     if player.owner:
         symbol = '>'
-    print(' ' + symbol + ' ' + str(player.name) + ' (' + str(player.civ_name()) + ')')
+    print(f" {symbol} {player.name} ({player.civ_name()})")
 
 rec.map_image().resize((1024, 1024)).save(args.output)
-print("Minimap saved under '{}'".format(args.output))
+print(f"Minimap saved under '{args.output}'")
