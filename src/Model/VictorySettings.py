@@ -34,4 +34,4 @@ class VictorySettings:
             if (self.score_limit):
                 return f"{condition} ({self.score_limit})"
 
-        return result
+        return condition
