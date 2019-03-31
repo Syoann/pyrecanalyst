@@ -1,3 +1,4 @@
+import json
 import os
 from ResourcePacks.AgeofEmpires.Unit import Unit
 
@@ -33,16 +34,16 @@ class Colors(object):
     def get_colors(category):
         """Get colors from the resources file."""
         if not Colors.colors:
-            with open(os.path.join(os.path.dirname(__file__), '../../../resources/data/ageofempires/colors.py'),'r') as f:
-                Colors.colors = eval(f.read())
+            with open(os.path.join(os.path.dirname(__file__), '../../../resources/data/ageofempires/colors.json'),'r') as fh:
+                Colors.colors = json.load(fh)
 
         return Colors.colors[category]
 
     @staticmethod
-    def get_terrain_color(id, variation=1):
+    def get_terrain_color(id, variation="1"):
         """Get the color for a terrain type."""
         terrain_colors = Colors.get_colors('terrain')
-        return terrain_colors[id][variation]
+        return terrain_colors[str(id)][str(variation)]
 
     @staticmethod
     def get_unit_color(id):
@@ -56,4 +57,4 @@ class Colors(object):
     def get_player_color(id):
         """Get the color for a player."""
         player_colors = Colors.get_colors('players')
-        return player_colors[id]
+        return player_colors[str(id)]
