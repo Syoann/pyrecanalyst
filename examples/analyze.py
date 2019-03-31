@@ -13,7 +13,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from RecordedGame import RecordedGame
 from BasicTranslator import BasicTranslator
-from Utils import Utils
 
 
 parser = argparse.ArgumentParser()

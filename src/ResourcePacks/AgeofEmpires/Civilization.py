@@ -25,6 +25,16 @@ class Civilization:
     MAGYARS = 22
     SLAVS = 23
 
+    MALIANS = 24
+    ETHIOPIANS = 25
+    BERBERS = 26
+    PORTUGUESE = 27
+    BURMESE = 28
+    KHMER = 29
+    MALAY = 30
+    VIETNAMESE = 31
+
+
     CIV_NAMES = {
         NONE: '',
         BRITONS: 'Britons',
@@ -50,6 +60,14 @@ class Civilization:
         INCAS: 'Incas',
         MAGYARS: 'Magyars',
         SLAVS: 'Slavs',
+        MALIANS: 'Malians',
+        ETHIOPIANS: 'Ethiopians',
+        BERBERS: 'Berbers',
+        PORTUGUESE: 'Portuguese',
+        BURMESE: 'Burmese',
+        KHMER: 'Khmer',
+        MALAY: 'Malay',
+        VIETNAMESE: 'Vietnamese'
     }
 
     @staticmethod
@@ -95,3 +113,23 @@ class Civilization:
                       Civilization.INCAS,
                       Civilization.MAGYARS,
                       Civilization.SLAVS)
+
+    @staticmethod
+    def is_african_kingdoms_civ(id):
+        """
+        Checks if a civilization was added in the African Kingdoms expansion.
+        """
+        return id in (Civilization.MALIANS,
+                      Civilization.ETHIOPIANS,
+                      Civilization.BERBERS,
+                      Civilization.PORTUGUESE)
+
+    @staticmethod
+    def is_rajas_civ(id):
+        """
+        Checks if a civilization was added in the Rise of the Rajas expansion.
+        """
+        return id in (Civilization.BURMESE,
+                      Civilization.KHMER,
+                      Civilization.MALAY,
+                      Civilization.VIETNAMESE)
