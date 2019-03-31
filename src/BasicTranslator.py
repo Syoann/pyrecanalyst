@@ -13,9 +13,6 @@ class BasicTranslator:
         self.locale = locale
         self.translations = {}
 
-    def __del__(self):
-        ( f.close() for f in self.translations.values() )
-
     def trans(self, filename, keys):
         if not filename in self.translations:
             current = self.get_file_path(self.locale, filename)
@@ -31,7 +28,7 @@ class BasicTranslator:
     def get_file_path(self, locale, filename):
         """Get the path to a translation file."""
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                            os.pardir, 'resources', 'lang', locale, filename + '.py')
+                            os.pardir, 'resources', 'lang', locale, filename + '.json')
         return os.path.normpath(path)
 
 
@@ -40,9 +37,10 @@ class BasicTranslator:
         if not arr:
             return None
 
-        prop, val = [str(k) for k in keys]
-        if prop in arr and val in arr[prop]:
-            arr = arr[prop][val]
-        else:
+        # JSON only uses strings as keys
+        prop, val = list(map(str, keys))
+
+        try:
+            return arr[prop][val]
+        except KeyError:
             return ""
-        return arr
