@@ -1,11 +1,11 @@
+import json
 import os
 
 
 class BasicTranslator:
     """
-    Super tiny default translator for when RecAnalyst is used outside of Laravel.
-    Uses translations provided with RecAnalyst, with no possibility of
-    customisation.
+    Super tiny default translator. Uses translations provided with RecAnalyst,
+    with no possibility of customisation.
     """
 
     def __init__(self, locale='en'):
@@ -24,8 +24,7 @@ class BasicTranslator:
                 current = self.get_file_path('en', filename)
 
             with open(current) as fh:
-                translation_table = eval(fh.read())
-                self.translations[filename] = translation_table
+                self.translations[filename] = json.load(fh)
 
         return self.get(self.translations[filename], keys)
 
@@ -36,12 +35,12 @@ class BasicTranslator:
         return os.path.normpath(path)
 
 
-    def get(self, arr, lst):
+    def get(self, arr, keys):
         """Get a value from a property list."""
         if not arr:
             return None
 
-        prop, val = lst
+        prop, val = [str(k) for k in keys]
         if prop in arr and val in arr[prop]:
             arr = arr[prop][val]
         else:
