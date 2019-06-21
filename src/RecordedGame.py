@@ -64,7 +64,7 @@ class RecordedGame:
         """Run an analysis on the current game."""
         return analyzer.analyze(self)
 
-    def get_analysis(self, analyzer_name, arg=[], start_at=0):
+    def get_analysis(self, analyzer_name, arg=None, start_at=0):
         """Get an analysis result for a specific analyzer, running it if necessary."""
         key = str(analyzer_name) + ':' + str(start_at)
         if key not in self.analyses.keys():
@@ -154,8 +154,7 @@ class RecordedGame:
 
     def achievements(self, options=None):
         """Get the player achievements."""
-        proc = Achievements(self, options)
-        return proc.run()
+        return Achievements(self, options).run()
 
     def get_translate_key(self, args):
         """Get a translate key."""
