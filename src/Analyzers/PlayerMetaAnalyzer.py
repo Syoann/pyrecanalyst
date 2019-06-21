@@ -29,7 +29,7 @@ class PlayerMetaAnalyzer(Analyzer):
 
             players.append(player)
 
-            if not player.index in coop_partners:
+            if player.index not in coop_partners:
                 coop_partners[player.index] = []
             coop_partners[player.index].append(player)
 
@@ -73,12 +73,10 @@ class PlayerMetaAnalyzer(Analyzer):
         """Find the position of the small player metadata block."""
         version = self.get(VersionAnalyzer)
 
-        constant2 = struct.pack('cccccccc', b'\x9A', b'\x99', b'\x99', b'\x99', b'\x99', b'\x99', b'\xF9', b'\x3F')
+        constant2 = struct.pack('cccccccc', b'\x9A', b'\x99', b'\x99', b'\x99',
+                                            b'\x99', b'\x99', b'\xF9', b'\x3F')
         separator = struct.pack('cccc', b'\x9D', b'\xFF', b'\xFF', b'\xFF')
 
-        players_by_index = {}
-
-        size = len(self.header)
         self.position = 0
 
         trigger_info_pos = self.header.rfind(constant2, self.position) + len(constant2)
