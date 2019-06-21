@@ -7,14 +7,12 @@ class MapDataAnalyzer(Analyzer):
     def run(self):
         self.version = self.get(VersionAnalyzer)
 
-        map_size_x = self.read_header('<l', 4)
-        map_size_y = self.read_header('<l', 4)
-        self.map_size_x = map_size_x
-        self.map_size_y = map_size_y
+        self.map_size_x = self.read_header('<l', 4)
+        self.map_size_y = self.read_header('<l', 4)
 
         # If we went wrong somewhere, throw now so we don't end up in a near-
         # infinite loop later.
-        if map_size_x > 10000 or map_size_y > 10000:
+        if self.map_size_x > 10000 or self.map_size_y > 10000:
             raise Exception('Got invalid map size')
 
         self.skip_zones()
@@ -22,7 +20,7 @@ class MapDataAnalyzer(Analyzer):
         all_visible = self.read_header('<B', 1)
         fog_of_war = self.read_header('<B', 1)
 
-        terrain = self.read(TerrainAnalyzer, [map_size_x, map_size_y])
+        terrain = self.read(TerrainAnalyzer, [self.map_size_x, self.map_size_y])
 
         self.skip_obstructions()
         self.skip_visibility_map()
@@ -32,7 +30,7 @@ class MapDataAnalyzer(Analyzer):
         self.position += num_data * 27
 
         return {
-            'map_size': [map_size_x, map_size_y],
+            'map_size': [self.map_size_x, self.map_size_y],
             'all_visible': all_visible,
             'fog_of_war': fog_of_war,
             'terrain': terrain,
@@ -62,5 +60,5 @@ class MapDataAnalyzer(Analyzer):
     def skip_visibility_map(self):
         map_size_x = self.read_header('<l', 4)
         map_size_y = self.read_header('<l', 4)
-        # Visibility map. Can we use self for something?
+        # Visibility map. Can we use this for something?
         self.position += map_size_x * map_size_y * 4
