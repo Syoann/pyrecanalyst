@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 """
 Outputs a bunch of information about the recorded game, in a specified
@@ -8,6 +8,7 @@ can be passed to use a different language.
 
 import argparse
 import os
+import locale
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
@@ -20,9 +21,9 @@ parser.add_argument('-i', '--input', dest='filename', help='Input file', require
 parser.add_argument('-l', '--lang', dest='language', help='Language')
 args = parser.parse_args()
 
-# Deafult language
+# Deafult language is system locale
 if args.language is None:
-    args.language = 'fr'
+    args.language = locale.getdefaultlocale()[0].split('_')[0]
 
 
 # Read a recorded game from a file path.
