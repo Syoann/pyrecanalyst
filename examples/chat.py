@@ -8,13 +8,13 @@ Usage:
 """
 
 import argparse
+import datetime
 import os
 import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
 
 from RecordedGame import RecordedGame
-from Utils import Utils
 
 
 # Read a recorded game filename from the command line.
@@ -36,9 +36,10 @@ for chat in rec.header().pregame_chat:
 # Read the in-game chat from the file body.
 for chat in rec.body().chat_messages:
     # Format the millisecond time as HH:MM:SS.
-    time = Utils.format_game_time(chat.time)
+    time = datetime.timedelta(milliseconds=chat.time)
+    time_str = str(time).split(".")[0]
 
     if chat.player:
-        print(f"[{time}] <{chat.player.name}> {chat.msg}")
+        print(f"[{time_str}] <{chat.player.name}> {chat.msg}")
     else:
-        print(f"[{time}] {chat.msg}")
+        print(f"[{time_str}] {chat.msg}")
