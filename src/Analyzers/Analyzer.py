@@ -20,7 +20,7 @@ class Analyzer(object):
         self.body_size = len(self.body)
         return self.run()
 
-    def get(self, analyzer, arg=[]):
+    def get(self, analyzer, arg=None):
         """Get the result of another analyzer."""
         return self.rec.get_analysis(analyzer, arg).analysis
 
@@ -29,8 +29,6 @@ class Analyzer(object):
         Compose another analyzer. Starts reading at the current position, and
         uses the composed analyzer's final position as the new position.
         """
-        if arg is None:
-            arg = {}
         result = self.rec.get_analysis(analyzer, arg, self.position)
         self.position = result.position
         return result.analysis
