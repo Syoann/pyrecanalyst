@@ -1,7 +1,7 @@
 from Model.Player import Player
 
 
-class ChatMessage():
+class ChatMessage:
     """
     The ChatMessage class represents a single chat message sent before or during
     the game.
@@ -21,7 +21,7 @@ class ChatMessage():
         # Message text
         self.msg = msg
 
-        # Grou at which this chat is directed (<Team>, <Enemy>, <All>), if any
+        # Group at which this chat is directed (<Team>, <Enemy>, <All>), if any
         self.group = group
 
     def __str__(self):
