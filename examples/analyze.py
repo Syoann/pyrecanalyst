@@ -1,18 +1,15 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 """
 Outputs game information in JSON format.
 """
 
 import argparse
-import os
 import sys
 import json
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
-
-from RecordedGame import RecordedGame
-from BasicTranslator import BasicTranslator
+from pyrecanalyst.RecordedGame import RecordedGame
+from pyrecanalyst.BasicTranslator import BasicTranslator
 
 
 parser = argparse.ArgumentParser()
@@ -70,7 +67,7 @@ if args.researches:
         image.resize((image.size[0], image.size[1])).save(args.researches)
     except AttributeError as error:
         sys.stderr.write("Could not generate the research chronology...\n")
-        raise(error)
+        raise error
 
 # Create output map
 if args.minimap:
@@ -80,3 +77,4 @@ if args.minimap:
         image.resize((350, 200)).save(args.minimap)
     except AttributeError as error:
         sys.stderr.write("Could not generate the minimap...\n")
+        raise error

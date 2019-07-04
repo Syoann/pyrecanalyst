@@ -6,12 +6,9 @@ outputs the players in the game to the command line.
 """
 
 import os
-import sys
 import argparse
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
-
-from RecordedGame import RecordedGame
+from pyrecanalyst.RecordedGame import RecordedGame
 
 
 parser = argparse.ArgumentParser()

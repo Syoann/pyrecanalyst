@@ -9,12 +9,8 @@ Usage:
 
 import argparse
 import datetime
-import os
-import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../src"))
-
-from RecordedGame import RecordedGame
+from pyrecanalyst.RecordedGame import RecordedGame
 
 
 # Read a recorded game filename from the command line.
