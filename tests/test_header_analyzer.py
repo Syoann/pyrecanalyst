@@ -40,7 +40,7 @@ class HeaderAnalyzerTest(unittest.TestCase):
             # Identifiers embedded in the test game.
             'instructions': 'RECANALYST:INSTRUCTIONS\r\n\r\nDEMO SCENARIO INSTRUCTIONS',
             'hints': 'RECANALYST:HINTS\r\n\r\nSCENARIO HINTS',
-            'loss': 'RECANALYST:LOSS\r\n\r\nDEMO LOSS',
+            'defeat': 'RECANALYST:LOSS\r\n\r\nDEMO LOSS',
             'victory': 'RECANALYST:VICTORY\r\n\r\nDEMO VICTORY',
             'scouts': 'RECANALYST:SCOUT\r\n\r\nDEMO SCOUTING INFORMATION',
             'history': 'RECANALYST:HISTORY\r\n\r\nDEMO HISTORY',

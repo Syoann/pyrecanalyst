@@ -355,25 +355,6 @@ class HeaderAnalyzer(Analyzer):
             # of the skips above.
             self.position += 4
 
-    def skip_ai2(self):
-        from construct import Struct, Array, PascalString, Int16ul, Int32ul, Padding, If, Bytes, Float32l
-
-        frmt = Struct(
-                Padding(2),
-                "num_ai_strings" / Int16ul,
-                Array(),
-                Padding(6),
-
-                Padding(104),  # Unknown
-                "timers" / Array(8*10, Int16ul),
-                "shared_goals" / Array(256, Int16ul),
-                Padding(4096),  # Unknown
-                If(self.version.sub_version >= 11.96, Padding(1280)),  # Unknown
-                If(self.version.sub_version >= 12.3, Padding(4)),  # Unknown
-               )
-
-        parsing = frmt.parse(self.header[self.position:])
-
     def skip_trigger_info(self):
         """
         Skip a scenario triggers info block. See Scenario_triggers_analyzer for
@@ -475,37 +456,6 @@ class HeaderAnalyzer(Analyzer):
         self.analysis.scenario_filename = filename
 
 
-    def read_scenario_header2(self):
-        """
-        Read the scenario info header. Contains information about configured
-        players and the scenario file.
-        """
-        from construct import Struct, Array, PascalString, Int16ul, Int32ul, Padding, If, Bytes, Float32l
-
-        frmt = Struct(
-                "next_unit_id" / Int32ul,
-                Padding(4),
-                "names" / Array(16, Bytes(256)),
-                "player_ids" / Array(16, Int32ul),
-
-                Array(16, "player_data"/Struct(
-                      "active"/Int32ul,
-                      "human"/Int32ul,
-                      "civilization"/Int32ul,
-                      "constant"/Int32ul, # 0x04 0x00 0x00 0x00
-                      )),
-
-                Padding(5),
-                "elapsed_time" / Float32l,
-                "scenario_filename" / PascalString(Int16ul, "utf8"),
-                Padding(20),
-                If(not self.version.is_mgl, Padding(4)),
-               )
-
-        parsing = frmt.parse(self.header[self.position:])
-        self.analysis.scenario_filename = dict(parsing)["scenario_filename"]
-
-
     def read_messages(self):
         """Read messages."""
         from construct import Struct, PascalString, Int16ul, Tell, this, Bytes
@@ -523,6 +473,14 @@ class HeaderAnalyzer(Analyzer):
 
         parsing = frmt.parse(self.header[self.position:])
         self.position += parsing.offset
+
+        parsing.instructions = parsing.instructions.rstrip(b'\x00')
+        parsing.hints= parsing.hints.rstrip('\x00')
+        parsing.victory= parsing.victory.rstrip('\x00')
+        parsing.defeat = parsing.defeat.rstrip('\x00')
+        parsing.history= parsing.history.rstrip('\x00')
+        parsing.scouts= parsing.scouts.rstrip('\x00')
+
         return dict(parsing)
 
 

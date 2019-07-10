@@ -164,7 +164,7 @@ class PlayerInfoBlockAnalyzer(Analyzer):
             # getting exist_object_pos
             exist_object_pos = self.header.index(exist_object_separator, self.position+1)
             if not exist_object_pos:
-                raise Exception('Could not find existObjectSeparator')
+                raise Exception('Could not find exist_object_separator')
             else:
                 self.position = exist_object_pos + len(exist_object_separator)
 
