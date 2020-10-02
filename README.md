@@ -5,7 +5,7 @@ At the moment, this is just a portage from php to python, code is not optimized 
 
 ## Installation
 
-`git clone https://github.com/PietroDR/pyrecanalyst.git`
+`git clone https://github.com/Syoann/pyrecanalyst.git`
 
 ## Run
 
